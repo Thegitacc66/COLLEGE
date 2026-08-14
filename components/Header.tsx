@@ -9,7 +9,8 @@ import {
     Menu,
     X,
     PhoneCall,
-    Search
+    Search,
+    ArrowLeft
 } from 'lucide-react';
 
 export interface HeaderProps {
@@ -21,6 +22,9 @@ export interface HeaderProps {
     onLanguageToggle?: () => void;
     selectedCategory?: string;
     onSelectCategory?: (category: string) => void;
+    onHomeClick?: () => void;
+    showBackButton?: boolean;
+    onBack?: () => void;
 }
 
 export const CampusLogoBadge: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }) => {
@@ -29,12 +33,12 @@ export const CampusLogoBadge: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size 
     return (
         <div className={`${dimensions} bg-white rounded-full flex items-center justify-center p-0.5 border border-gray-200/90 shadow-sm shrink-0 overflow-hidden ring-2 ring-gray-100`}>
             <img
-                src='../logo1.png'
-                alt="Aadikavi Bhanubhakta Campus"
+                src='../logo2.jpg'
+                alt="Aadikavi Bhanubhakta Campus FSU Logo"
                 className="w-full h-full object-contain rounded-full"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/l.png';
+                    (e.target as HTMLImageElement).src = '/logo.svg';
                 }}
             />
         </div>
@@ -49,7 +53,10 @@ export const Header: React.FC<HeaderProps> = ({
     language = 'en',
     onLanguageToggle = () => { },
     selectedCategory = 'All',
-    onSelectCategory = (_category: string) => { }
+    onSelectCategory = (_category: string) => { },
+    onHomeClick,
+    showBackButton = false,
+    onBack
 }) => {
     const [isCommitteesOpen, setIsCommitteesOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -93,27 +100,52 @@ export const Header: React.FC<HeaderProps> = ({
         <header className="bg-[#eef2f7] sticky top-0 w-full z-50 border-b border-slate-200/80 shadow-xs">
             {/* Main Header Container */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-                {/* Brand Logo & Name */}
-                <a href="#" className="flex items-center gap-3.5 group shrink-0">
-                    <CampusLogoBadge size="md" />
-                    <div className="flex flex-col justify-center">
-                        <div className="flex items-center gap-1.5">
-                            <span className="font-extrabold text-gray-900 text-lg sm:text-xl leading-tight tracking-tight group-hover:text-blue-700 transition-colors">
-                                CLUBS
-                            </span>
-                            <span className="hidden sm:inline-block text-xs font-bold text-slate-400">|</span>
-                            <span className="hidden sm:inline-block font-bold text-gray-900 text-sm leading-tight tracking-tight group-hover:text-blue-700 transition-colors">
-                                Aadikavi Bhanubhakta Campus
+                {/* Left Side: Optional Back Button + Brand Logo & Name */}
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                    {(showBackButton || onBack) && (
+                        <button
+                            onClick={onBack}
+                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 active:scale-95 transition-all cursor-pointer shrink-0 -ml-1 sm:-ml-2"
+                            title={language === 'en' ? 'Back to All Committees' : 'सबै समितिहरूमा फर्कनुहोस्'}
+                            aria-label="Back"
+                        >
+                            <ArrowLeft className="w-5 h-5 transition-transform hover:-translate-x-0.5" />
+                        </button>
+                    )}
+
+                    {/* Brand Logo & Name */}
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (onHomeClick) {
+                                onHomeClick();
+                            } else {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        }}
+                        className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0"
+                    >
+                        <CampusLogoBadge size="md" />
+                        <div className="flex flex-col justify-center">
+                            <div className="flex items-center gap-1.5">
+                                <span className="font-extrabold text-gray-900 text-lg sm:text-xl leading-tight tracking-tight group-hover:text-blue-700 transition-colors">
+                                    CLUBS
+                                </span>
+                                <span className="hidden lg:inline-block text-xs font-bold text-slate-400">|</span>
+                                <span className="hidden lg:inline-block font-bold text-gray-900 text-sm leading-tight tracking-tight group-hover:text-blue-700 transition-colors">
+                                    Aadikavi Bhanubhakta Campus
+                                </span>
+                            </div>
+                            <span className="text-[#800000] text-xs sm:text-sm font-bold leading-tight mt-0.5">
+                                आदिकवि भानुभक्त क्याम्पस
                             </span>
                         </div>
-                        <span className="text-[#800000] text-xs sm:text-sm font-bold leading-tight mt-0.5">
-                            आदिकवि भानुभक्त क्याम्पस
-                        </span>
-                    </div>
-                </a>
+                    </a>
+                </div>
 
                 {/* Center Search Input Bar with Instant Results Dropdown */}
-                <div className="hidden md:flex items-center flex-1 max-w-md mx-4 relative">
+                <div className="hidden md:flex items-center flex-1 max-w-xs lg:max-w-md mx-2 lg:mx-4 relative">
                     <form onSubmit={handleSearchSubmit} className="relative w-full">
                         <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         <input
@@ -202,13 +234,13 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 {/* Desktop Navigation Items */}
-                <nav className="hidden md:flex items-center gap-6 shrink-0">
+                <nav className="hidden md:flex items-center gap-2.5 sm:gap-3.5 lg:gap-6 shrink-0">
                     {/* Committees Dropdown Trigger */}
                     <div className="relative group">
                         <button
                             onClick={() => setIsCommitteesOpen(!isCommitteesOpen)}
                             onMouseEnter={() => setIsCommitteesOpen(true)}
-                            className="flex items-center gap-1.5 text-sm font-semibold text-gray-800 hover:text-[#061129] transition-all cursor-pointer py-2"
+                            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-800 hover:text-[#061129] transition-all cursor-pointer py-2"
                         >
                             <span>{language === 'en' ? 'Committees' : 'समितिहरू'}</span>
                             <ChevronDown className="w-4 h-4 text-gray-500 group-hover:rotate-180 transition-transform duration-200" />
@@ -263,16 +295,16 @@ export const Header: React.FC<HeaderProps> = ({
                     {/* Globe Language Switch Button */}
                     <button
                         onClick={onLanguageToggle}
-                        className="p-2.5 text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200/80 transition-colors rounded-full cursor-pointer flex items-center justify-center shadow-2xs"
+                        className="p-2 sm:p-2.5 text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200/80 transition-colors rounded-full cursor-pointer flex items-center justify-center shadow-2xs"
                         title="Toggle Language"
                     >
-                        <Globe className="w-5 h-5 text-slate-700" />
+                        <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" />
                     </button>
 
                     {/* Contact Us Campus Blue Button */}
                     <button
                         onClick={scrollToContact}
-                        className="px-6 py-2.5 bg-[#0c72b8] hover:bg-[#0a5f9c] text-white font-semibold text-sm rounded-full cursor-pointer transition-colors shadow-2xs"
+                        className="px-3.5 py-2 sm:px-6 sm:py-2.5 bg-[#0c72b8] hover:bg-[#0a5f9c] text-white font-semibold text-xs sm:text-sm rounded-full cursor-pointer transition-colors shadow-2xs whitespace-nowrap"
                     >
                         {language === 'en' ? 'Contact Us' : 'सम्पर्क गर्नुहोस्'}
                     </button>

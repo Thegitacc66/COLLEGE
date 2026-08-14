@@ -5,7 +5,7 @@ import {
   ALL_CLUBS,
   UPCOMING_EVENTS,
   CAMPUS_NOTICES
-} from './data/clubsData';
+} from '../app/data/clubsData';
 import {
   Club,
   ClubEvent,
@@ -135,21 +135,16 @@ export default function App() {
   };
 
   const handleSelectClub = (club: Club | null) => {
+    setSelectedClub(club);
     if (club) {
-      showToast(
-        language === 'en'
-          ? 'Front page view active — committee details view is disabled for now.'
-          : 'मुख्य पृष्ठ दृश्य सक्रिय छ — समिति विवरण हाल बन्द छ।'
-      );
-      return;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    setSelectedClub(null);
   };
 
   // IF A CLUB IS SELECTED, RENDER FULL COMMITTEE HUB PAGE
   if (selectedClub) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#eef2f7] text-[#1b1b1e] font-inter">
+      <div className="min-h-screen flex flex-col bg-[#eef2f7] text-[#1b1b1e] font-quicksand">
         {/* Global Toast Notification */}
         {toastMessage && (
           <div className="fixed bottom-5 right-5 z-50 bg-[#000d27] text-white px-5 py-3 rounded-2xl shadow-2xl border border-amber-400 flex items-center gap-3 animate-in slide-in-from-bottom-5">
@@ -158,10 +153,10 @@ export default function App() {
           </div>
         )}
 
-        {/* Global Header */}
+        {/* Global Navigation Bar */}
         <Header
           clubs={clubs}
-          onSelectClub={(c) => handleSelectClub(c)}
+          onSelectClub={handleSelectClub}
           onSearchChange={(q) => {
             setSearchQuery(q);
             if (q.trim()) {
@@ -176,6 +171,9 @@ export default function App() {
             setSelectedClub(null);
             setSelectedCategory(cat);
           }}
+          onHomeClick={() => handleSelectClub(null)}
+          showBackButton={true}
+          onBack={() => handleSelectClub(null)}
         />
 
         <ClubPage
@@ -184,6 +182,9 @@ export default function App() {
           events={events}
           notices={notices}
           onRegisterEvent={handleRegisterEvent}
+          onApplyJoin={(_clubId) => {
+            showToast('Membership application submitted to committee executive board!');
+          }}
           language={language}
         />
 
@@ -254,7 +255,7 @@ export default function App() {
 
         {/* 1) GRID CARD VIEW MODE */}
         {viewMode === 'grid' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {displayedClubs.map((club) => (
               <ClubCard
                 key={club.id}
@@ -345,7 +346,7 @@ export default function App() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                   {clubList.map((club) => (
                     <ClubCard
                       key={club.id}
