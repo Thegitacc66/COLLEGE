@@ -10,10 +10,10 @@ import {
     Mail,
     Phone,
     Building2,
-    Clock,
     CheckCircle2,
     UserPlus,
-    Bell
+    Bell,
+    GraduationCap
 } from 'lucide-react';
 
 import {
@@ -114,20 +114,14 @@ export const ClubDetailModal: React.FC<ClubDetailModalProps> = ({
                                 {language === 'np' && club.nepaliName ? club.nepaliName : club.name}
                             </h2>
 
-                            <p className="text-sm text-gray-300 mt-1 flex flex-wrap items-center gap-4">
-                                {club.roomLocation && (
-                                    <span className="flex items-center gap-1">
-                                        <MapPin className="w-4 h-4 text-amber-400" />
+                            {club.roomLocation && (
+                                <p className="text-sm text-gray-300 mt-1 flex flex-wrap items-center gap-4">
+                                    <span className="flex items-center gap-1.5">
+                                        <MapPin className="w-4 h-4 text-amber-400 shrink-0" />
                                         {club.roomLocation}
                                     </span>
-                                )}
-                                {club.meetingSchedule && (
-                                    <span className="flex items-center gap-1">
-                                        <Clock className="w-4 h-4 text-amber-400" />
-                                        {club.meetingSchedule}
-                                    </span>
-                                )}
-                            </p>
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -252,10 +246,14 @@ export const ClubDetailModal: React.FC<ClubDetailModalProps> = ({
                                                 <h4 className="text-sm font-bold text-gray-900 mt-1 truncate">{member.name}</h4>
                                                 <p className="text-xs text-gray-500 truncate">{member.department}</p>
                                                 {member.phone && (
-                                                    <p className="text-[11px] text-gray-600 flex items-center gap-1 mt-1">
-                                                        <Phone className="w-3 h-3 text-gray-400" />
+                                                    <a
+                                                        href={`tel:${member.phone.replace(/\s+/g, '')}`}
+                                                        className="text-[11px] text-[#0c72b8] hover:text-blue-800 font-semibold flex items-center gap-1 mt-1 transition-colors hover:underline"
+                                                        title={`Call ${member.phone}`}
+                                                    >
+                                                        <Phone className="w-3 h-3 text-emerald-600 shrink-0" />
                                                         <span>{member.phone}</span>
-                                                    </p>
+                                                    </a>
                                                 )}
                                             </div>
                                         </div>

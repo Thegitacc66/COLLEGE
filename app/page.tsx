@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
+import { motion } from 'motion/react';
 import {
   ALL_CLUBS,
   UPCOMING_EVENTS,
   CAMPUS_NOTICES
-} from '../app/data/clubsData';
+} from './data/clubsData';
 import {
   Club,
   ClubEvent,
@@ -21,6 +22,8 @@ import { ClubPage } from '@/components/ClubPage';
 import { ClubDetailModal } from '@/components/ClubDetailModal';
 import { EventsCalendarSection } from '@/components/EventsCalendarSection';
 import { Footer } from '@/components/Footer';
+import { ScrollProgressBar } from '@/components/ScrollProgressBar';
+import { ScrollToTop } from '@/components/ScrollToTop';
 import {
   Building2,
   Sparkles,
@@ -136,15 +139,16 @@ export default function App() {
 
   const handleSelectClub = (club: Club | null) => {
     setSelectedClub(club);
-    if (club) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   // IF A CLUB IS SELECTED, RENDER FULL COMMITTEE HUB PAGE
   if (selectedClub) {
     return (
       <div className="min-h-screen flex flex-col bg-[#eef2f7] text-[#1b1b1e] font-quicksand">
+        {/* Scroll Progress Bar */}
+        <ScrollProgressBar />
+
         {/* Global Toast Notification */}
         {toastMessage && (
           <div className="fixed bottom-5 right-5 z-50 bg-[#000d27] text-white px-5 py-3 rounded-2xl shadow-2xl border border-amber-400 flex items-center gap-3 animate-in slide-in-from-bottom-5">
@@ -160,7 +164,7 @@ export default function App() {
           onSearchChange={(q) => {
             setSearchQuery(q);
             if (q.trim()) {
-              setSelectedClub(null);
+              handleSelectClub(null);
             }
           }}
           searchQuery={searchQuery}
@@ -168,7 +172,7 @@ export default function App() {
           onLanguageToggle={() => setLanguage(language === 'en' ? 'np' : 'en')}
           selectedCategory={selectedCategory}
           onSelectCategory={(cat) => {
-            setSelectedClub(null);
+            handleSelectClub(null);
             setSelectedCategory(cat);
           }}
           onHomeClick={() => handleSelectClub(null)}
@@ -195,6 +199,9 @@ export default function App() {
             setSelectedCategory(cat);
           }}
         />
+
+        {/* Scroll To Top Action */}
+        <ScrollToTop />
       </div>
     );
   }
@@ -202,6 +209,9 @@ export default function App() {
   // MAIN DASHBOARD VIEW
   return (
     <div className="min-h-screen flex flex-col bg-[#eef2f7] text-[#1b1b1e] font-inter">
+      {/* Scroll Progress Indicator Bar */}
+      <ScrollProgressBar />
+
       {/* Global Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-5 right-5 z-50 bg-[#000d27] text-white px-5 py-3 rounded-2xl shadow-2xl border border-amber-400 flex items-center gap-3 animate-in slide-in-from-bottom-5">
@@ -260,7 +270,7 @@ export default function App() {
               <ClubCard
                 key={club.id}
                 club={club}
-                onSelect={(c) => setSelectedClub(c)}
+                onSelect={(c) => handleSelectClub(c)}
                 language={language}
               />
             ))}
@@ -269,29 +279,35 @@ export default function App() {
 
         {/* 2) LIST TABLE VIEW MODE */}
         {viewMode === 'list' && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.15 }}
+            transition={{ duration: 0.5 }}
+            className="neu-flat rounded-2xl p-2 sm:p-4 overflow-hidden"
+          >
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm border-collapse">
-                <thead className="bg-[#000d27] text-white text-xs uppercase font-bold tracking-wider">
+                <thead className="bg-[#000d27] text-white text-xs uppercase font-bold tracking-wider rounded-xl">
                   <tr>
-                    <th className="p-4 whitespace-nowrap">Committee Name</th>
+                    <th className="p-4 rounded-l-xl whitespace-nowrap">Committee Name</th>
                     <th className="p-4 whitespace-nowrap">Category</th>
                     <th className="p-4 whitespace-nowrap">Faculty Advisor</th>
                     <th className="p-4 whitespace-nowrap">President</th>
                     <th className="p-4 text-center whitespace-nowrap">Members</th>
-                    <th className="p-4 text-right whitespace-nowrap">Actions</th>
+                    <th className="p-4 text-right rounded-r-xl whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 font-inter">
+                <tbody className="divide-y divide-slate-200 font-inter">
                   {displayedClubs.map((club) => (
-                    <tr key={club.id} className="hover:bg-blue-50/50 transition-colors">
+                    <tr key={club.id} className="hover:bg-blue-50/60 transition-colors">
                       <td className="p-4 align-middle">
                         <div className="flex items-center gap-3">
                           <img
                             src={club.logo}
                             alt={club.name}
                             referrerPolicy="no-referrer"
-                            className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
+                            className="w-10 h-10 rounded-full object-cover neu-pressed shrink-0"
                           />
                           <div>
                             <span className="font-bold text-gray-900 block font-poppins">
@@ -302,25 +318,27 @@ export default function App() {
                         </div>
                       </td>
                       <td className="p-4 align-middle whitespace-nowrap">
-                        <span className="inline-flex items-center whitespace-nowrap bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-md">
+                        <span className="inline-flex items-center whitespace-nowrap neu-pressed text-[#0c72b8] text-xs font-semibold px-3 py-1 rounded-full">
                           {club.category}
                         </span>
                       </td>
                       <td className="p-4 align-middle text-xs font-medium text-gray-700">{club.facultyAdvisor}</td>
                       <td className="p-4 align-middle text-xs font-medium text-gray-700">{club.president}</td>
                       <td className="p-4 align-middle text-center whitespace-nowrap">
-                        <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap">
+                        <span className="neu-pressed text-blue-900 text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap">
                           {club.memberCount}+
                         </span>
                       </td>
                       <td className="p-4 align-middle text-right whitespace-nowrap">
                         <div className="flex items-center justify-end">
-                          <button
-                            onClick={() => setSelectedClub(club)}
-                            className="px-3.5 py-1.5 bg-[#000d27] hover:bg-[#0a2348] text-white text-xs font-bold rounded-lg cursor-pointer transition-colors whitespace-nowrap"
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleSelectClub(club)}
+                            className="px-3.5 py-1.5 neu-button-primary text-white text-xs font-bold rounded-xl cursor-pointer transition-colors whitespace-nowrap"
                           >
                             {language === 'en' ? 'View Committee' : 'समिति हेर्नुहोस्'}
-                          </button>
+                          </motion.button>
                         </div>
                       </td>
                     </tr>
@@ -328,20 +346,27 @@ export default function App() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* 3) CATEGORIZED ACCORDION VIEW MODE */}
         {viewMode === 'categorized' && (
           <div className="space-y-8">
             {(Object.entries(categorizedClubs) as [string, Club[]][]).map(([categoryName, clubList]) => (
-              <div key={categoryName} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-100">
+              <motion.div
+                key={categoryName}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.15 }}
+                transition={{ duration: 0.5 }}
+                className="neu-flat rounded-2xl p-6"
+              >
+                <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-200">
                   <div className="flex items-center gap-2">
-                    <Layers className="w-5 h-5 text-blue-600" />
+                    <Layers className="w-5 h-5 text-[#0c72b8]" />
                     <h3 className="text-xl font-bold text-[#000d27] font-poppins">{categoryName}</h3>
                   </div>
-                  <span className="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full">
+                  <span className="neu-pressed text-[#0c72b8] text-xs font-bold px-3 py-1 rounded-full">
                     {clubList.length} Committee{clubList.length > 1 ? 's' : ''}
                   </span>
                 </div>
@@ -351,12 +376,12 @@ export default function App() {
                     <ClubCard
                       key={club.id}
                       club={club}
-                      onSelect={(c) => setSelectedClub(c)}
+                      onSelect={(c) => handleSelectClub(c)}
                       language={language}
                     />
                   ))}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
@@ -364,9 +389,11 @@ export default function App() {
         {/* Global Show More / Show Less Committees Button */}
         {filteredClubs.length > INITIAL_COMMITTEES_COUNT && (
           <div className="mt-8 flex justify-center">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setShowAllCommittees(!showAllCommittees)}
-              className="px-6 py-3 bg-white border border-gray-300 hover:border-blue-600 text-gray-800 hover:text-blue-700 font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 cursor-pointer group"
+              className="px-6 py-3 neu-button text-gray-800 hover:text-[#0c72b8] font-bold text-xs sm:text-sm rounded-xl transition-all flex items-center gap-2 cursor-pointer group"
             >
               <span>
                 {showAllCommittees
@@ -376,28 +403,28 @@ export default function App() {
                     : `थप समितिहरू हेर्नुहोस् (${filteredClubs.length - INITIAL_COMMITTEES_COUNT} बाँकी)`)}
               </span>
               {showAllCommittees ? (
-                <ChevronUp className="w-4 h-4 text-blue-600 group-hover:-translate-y-0.5 transition-transform" />
+                <ChevronUp className="w-4 h-4 text-[#0c72b8] group-hover:-translate-y-0.5 transition-transform" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-blue-600 group-hover:translate-y-0.5 transition-transform" />
+                <ChevronDown className="w-4 h-4 text-[#0c72b8] group-hover:translate-y-0.5 transition-transform" />
               )}
-            </button>
+            </motion.button>
           </div>
         )}
 
         {/* Empty State */}
         {filteredClubs.length === 0 && (
-          <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
-            <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <div className="neu-flat rounded-2xl p-12 text-center">
+            <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <h3 className="text-lg font-bold text-gray-800">No student committees match your filter</h3>
             <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
-              Try resetting your search query or selecting "All 13 Clubs" to explore all active committees.
+              Try resetting your search query or selecting "All 14 Clubs" to explore all active committees.
             </p>
             <button
               onClick={() => {
                 setSearchQuery('');
                 setSelectedCategory('All');
               }}
-              className="mt-4 px-5 py-2 bg-[#000d27] text-white text-xs font-bold rounded-xl cursor-pointer"
+              className="mt-4 px-5 py-2 neu-button-primary text-white text-xs font-bold rounded-xl cursor-pointer"
             >
               Reset Filters
             </button>
@@ -410,6 +437,12 @@ export default function App() {
         events={events}
         onRegisterEvent={handleRegisterEvent}
         language={language}
+        onSelectClubById={(clubId) => {
+          const matched = clubs.find((c) => c.id === clubId);
+          if (matched) {
+            handleSelectClub(matched);
+          }
+        }}
       />
 
       {/* Modals & Dialog Views */}
@@ -426,6 +459,10 @@ export default function App() {
       <Footer
         language={language}
       />
+
+      {/* Global Scroll To Top Button with Circular Progress */}
+      <ScrollToTop />
     </div>
   );
 }
+

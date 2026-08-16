@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { motion } from 'motion/react';
 import { Users, ArrowRight, Sparkles } from 'lucide-react';
 import { Club, Language } from '../app/data/clubsData';
 
@@ -8,7 +9,7 @@ export const DEFAULT_CLUB_SAMPLE: Club = {
     id: 'abit-club',
     name: 'ABIT Club',
     nepaliName: 'एबीआईटी क्लब',
-    category: 'IT',
+    category: 'Technology & IT',
     logo: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&h=300&fit=crop',
     accentColor: '#0c72b8',
     description: 'Fostering tech innovation and programming skills.',
@@ -39,18 +40,24 @@ export const ClubCard: React.FC<ClubCardProps> = ({
     language = 'en'
 }) => {
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0, y: 35 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.15 }}
+            whileHover={{ y: -6, scale: 1.012, transition: { duration: 0.2 } }}
+            whileTap={{ scale: 0.985 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
             onClick={() => onSelect(club)}
-            className="group neu-card p-5 sm:p-6 flex flex-col justify-between hover:-translate-y-1 relative overflow-hidden cursor-pointer"
+            className="group neu-card p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden cursor-pointer"
         >
             <div>
                 {/* Category Badge & Optional Featured Badge */}
                 <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="text-[11px] font-bold text-[#0c72b8] neu-pressed px-3 py-1 rounded-full uppercase tracking-wider">
+                    <span className="text-[11px] font-bold text-[#0c72b8] neu-pressed px-3 py-1 rounded-full uppercase tracking-wider truncate max-w-[70%]">
                         {club.category}
                     </span>
                     {club.featured && (
-                        <span className="neu-pressed text-[#0c72b8] text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <span className="neu-pressed text-[#0c72b8] text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shrink-0">
                             <Sparkles className="w-3 h-3 text-[#0c72b8]" />
                             <span>{language === 'en' ? 'Featured' : 'विशेष'}</span>
                         </span>
@@ -115,6 +122,6 @@ export const ClubCard: React.FC<ClubCardProps> = ({
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
                 </button>
             </div>
-        </div>
+        </motion.div>
     );
 };
