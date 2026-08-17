@@ -1,8 +1,7 @@
-
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
     ArrowLeft,
     Users,
@@ -39,17 +38,24 @@ import {
     ChevronUp,
     ChevronLeft,
     Layers,
-    Info
+    Info,
+    Search,
+    ArrowUpDown,
+    SlidersHorizontal,
+    Filter,
+    Crown,
+    Briefcase,
+    UserCheck
 } from 'lucide-react';
 
 import {
     Club,
     ClubEvent,
     ClubNotice,
-    Language
+    Language,
+    AchievementItem,
+    LeadershipMember
 } from '../app/data/clubsData';
-
-// FIX 1: Updated path to sibling directory (common fix for 'module not found')
 import { SuggestionMessageBox } from './SuggestionMessageBox';
 
 export interface AchievementCardData {
@@ -650,7 +656,7 @@ export const ClubPage: React.FC<ClubPageProps> = ({
     // Achievements State with rich cards
     const [achievements, setAchievements] = useState<AchievementCardData[]>(() => {
         if (club.achievementItems && club.achievementItems.length > 0) {
-            return club.achievementItems.map((item: { id: any; title: string; description: any; date: any; category: any; badge: any; image: any; }, idx: number) => ({
+            return club.achievementItems.map((item, idx) => ({
                 id: item.id || `ach-${club.id}-${idx}`,
                 title: item.title,
                 description: item.description || 'Major impactful milestone organized and delivered by the committee members and executive leadership.',
@@ -662,27 +668,25 @@ export const ClubPage: React.FC<ClubPageProps> = ({
         }
         if (club.achievements && club.achievements.length > 0) {
             return club.achievements.map((item, idx) => {
-                // FIX 2: Added 'as any' to avoid 'property does not exist on type never' error
-                const itemObj = item as any;
-                if (typeof itemObj === 'object' && itemObj !== null) {
+                if (typeof item === 'object') {
                     return {
-                        id: itemObj.id || `ach-${club.id}-${idx}`,
-                        title: itemObj.title,
-                        description: itemObj.description || 'Major impactful milestone organized and delivered by the committee members and executive leadership.',
-                        date: itemObj.date || (['2023', '2024', '2023', '2024'][idx % 4]),
-                        category: itemObj.category || (idx === 0 ? 'Business Competition' : idx === 1 ? 'Campus Honor' : idx === 2 ? 'Finance Expo' : 'Academic Contest'),
-                        badge: itemObj.badge || (idx === 0 ? 'National Champions' : idx === 1 ? 'Management Honor' : idx === 2 ? '1st Place Gold' : 'Overall Champions'),
-                        image: itemObj.image || getContextualAchievementImage(itemObj.title, idx, club.category)
+                        id: item.id || `ach-${club.id}-${idx}`,
+                        title: item.title,
+                        description: item.description || 'Major impactful milestone organized and delivered by the committee members and executive leadership.',
+                        date: item.date || (['2023', '2024', '2023', '2024'][idx % 4]),
+                        category: item.category || (idx === 0 ? 'Business Competition' : idx === 1 ? 'Campus Honor' : idx === 2 ? 'Finance Expo' : 'Academic Contest'),
+                        badge: item.badge || (idx === 0 ? 'National Champions' : idx === 1 ? 'Management Honor' : idx === 2 ? '1st Place Gold' : 'Overall Champions'),
+                        image: item.image || getContextualAchievementImage(item.title, idx, club.category)
                     };
                 }
                 return {
                     id: `ach-${club.id}-${idx}`,
-                    title: String(item),
+                    title: item,
                     description: 'Successfully planned, organized, and executed with high student turnout and institutional recognition.',
                     date: ['2023', '2024', '2023', '2024'][idx % 4],
                     category: idx === 0 ? 'Business Competition' : idx === 1 ? 'Campus Honor' : idx === 2 ? 'Finance Expo' : 'Academic Contest',
                     badge: idx === 0 ? 'National Champions' : idx === 1 ? 'Management Honor' : idx === 2 ? '1st Place Gold' : 'Overall Champions',
-                    image: getContextualAchievementImage(String(item), idx, club.category)
+                    image: getContextualAchievementImage(item, idx, club.category)
                 };
             });
         }
@@ -694,7 +698,7 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                 date: '2023',
                 category: 'Business Competition',
                 badge: 'National Champions',
-                image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&auto=format&fit=crop&q=80'
+                image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&auto=format&fit=crop&q=80'
             },
             {
                 id: `ach-${club.id}-default-2`,
@@ -819,6 +823,125 @@ export const ClubPage: React.FC<ClubPageProps> = ({
         }, 2000);
     };
 
+    // -------------------------------------------------------------
+    // LEADERSHIP BOARD & MEMBERS CONTROLS (SEARCH, SECTION, SORT, SHOW MORE/LESS)
+    // -------------------------------------------------------------
+    const [memberSearchQuery, setMemberSearchQuery] = useState('');
+    const [memberRoleCategory, setMemberRoleCategory] = useState<'all' | 'board' | 'advisors' | 'members'>('all');
+    const [memberSortBy, setMemberSortBy] = useState<'hierarchy' | 'name-asc' | 'name-desc' | 'role'>('hierarchy');
+    const [showAllMembers, setShowAllMembers] = useState(false);
+
+    // Helper to categorize members
+    const getMemberCategory = (member: LeadershipMember): 'board' | 'advisors' | 'members' => {
+        const role = (member.role || '').toLowerCase();
+        if (
+            role.includes('advisor') ||
+            role.includes('patron') ||
+            role.includes('faculty') ||
+            role.includes('chief') ||
+            role.includes('head') ||
+            role.includes('mentor')
+        ) {
+            return 'advisors';
+        }
+        if (
+            role.includes('president') ||
+            role.includes('secretary') ||
+            role.includes('treasurer') ||
+            role.includes('chair') ||
+            role.includes('leader')
+        ) {
+            return 'board';
+        }
+        return 'members';
+    };
+
+    // Helper to calculate hierarchy priority
+    const getMemberRank = (member: LeadershipMember): number => {
+        const role = (member.role || '').toLowerCase();
+        if (role.includes('advisor') || role.includes('chief') || role.includes('head') || role.includes('patron')) return 1;
+        if (role.includes('president') && !role.includes('vice')) return 2;
+        if (role.includes('vice') && role.includes('president')) return 3;
+        if (role.includes('secretary') && !role.includes('joint')) return 4;
+        if (role.includes('joint') && role.includes('secretary')) return 5;
+        if (role.includes('treasurer')) return 6;
+        if (role.includes('coordinator')) return 7;
+        return 8; // General/Executive member
+    };
+
+    // Clean valid members (removes completely empty stub objects if any)
+    const validLeadershipList = useMemo(() => {
+        return leadershipList.filter(
+            (m) => (m.name && m.name.trim().length > 0) || (m.role && m.role.trim().length > 0)
+        );
+    }, [leadershipList]);
+
+    // Counts for each category tab
+    const memberCategoryCounts = useMemo(() => {
+        const counts = {
+            all: validLeadershipList.length,
+            board: 0,
+            advisors: 0,
+            members: 0
+        };
+        validLeadershipList.forEach((m) => {
+            const cat = getMemberCategory(m);
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        return counts;
+    }, [validLeadershipList]);
+
+    // Filtered & Sorted members
+    const filteredLeadership = useMemo(() => {
+        let list = validLeadershipList.filter((m) => {
+            // Search Match
+            if (memberSearchQuery.trim()) {
+                const q = memberSearchQuery.toLowerCase().trim();
+                const matches =
+                    (m.name || '').toLowerCase().includes(q) ||
+                    (m.role || '').toLowerCase().includes(q) ||
+                    (m.department || '').toLowerCase().includes(q) ||
+                    (m.phone || '').toLowerCase().includes(q) ||
+                    (m.email || '').toLowerCase().includes(q);
+                if (!matches) return false;
+            }
+
+            // Category / Section Filter
+            if (memberRoleCategory !== 'all') {
+                const cat = getMemberCategory(m);
+                if (cat !== memberRoleCategory) return false;
+            }
+
+            return true;
+        });
+
+        // Sorting
+        list = [...list].sort((a, b) => {
+            if (memberSortBy === 'name-asc') {
+                return (a.name || '').localeCompare(b.name || '');
+            }
+            if (memberSortBy === 'name-desc') {
+                return (b.name || '').localeCompare(a.name || '');
+            }
+            if (memberSortBy === 'role') {
+                return (a.role || '').localeCompare(b.role || '');
+            }
+            // Hierarchy rank
+            const rankA = getMemberRank(a);
+            const rankB = getMemberRank(b);
+            if (rankA !== rankB) return rankA - rankB;
+            return 0;
+        });
+
+        return list;
+    }, [validLeadershipList, memberSearchQuery, memberRoleCategory, memberSortBy]);
+
+    const VISIBLE_MEMBERS_LIMIT = 6;
+    const displayedLeadership = showAllMembers
+        ? filteredLeadership
+        : filteredLeadership.slice(0, VISIBLE_MEMBERS_LIMIT);
+    const hasMoreMembers = filteredLeadership.length > VISIBLE_MEMBERS_LIMIT;
+
     return (
         <div className="min-h-screen bg-[#eef2f7] text-[#1b1b1e] font-quicksand pb-20 animate-in fade-in duration-300">
             {/* Hero Banner Section (Clean Academic Neumorphic Aesthetic) */}
@@ -928,12 +1051,13 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                                 return (
                                     <button
                                         key={tab.id}
-                                        // FIX 3: Wrapped assignment in braces to ensure callback returns void
-                                        ref={(el) => { tabButtonRefs.current[tab.id] = el; }}
+                                        ref={(el) => {
+                                            tabButtonRefs.current[tab.id] = el;
+                                        }}
                                         onClick={() => scrollToSection(tab.id)}
                                         className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 border ${isActive
-                                            ? 'bg-[#0c72b8] text-white shadow-[0_4px_12px_rgba(12,114,184,0.35)] border-[#0c72b8]'
-                                            : 'bg-[#eef2f7] text-slate-700 hover:text-slate-900 shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[4px_4px_10px_#c8d2e2,-4px_-4px_10px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,inset_-2px_-2px_5px_#ffffff] border-white/80'
+                                                ? 'bg-[#0c72b8] text-white shadow-[0_4px_12px_rgba(12,114,184,0.35)] border-[#0c72b8]'
+                                                : 'bg-[#eef2f7] text-slate-700 hover:text-slate-900 shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[4px_4px_10px_#c8d2e2,-4px_-4px_10px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,inset_-2px_-2px_5px_#ffffff] border-white/80'
                                             }`}
                                     >
                                         {tab.icon}
@@ -1501,75 +1625,330 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                     transition={{ duration: 0.5, ease: 'easeOut' }}
                     className="space-y-6 scroll-mt-36"
                 >
-                    <div>
-                        <h2 className="text-2xl font-extrabold text-slate-900 font-poppins tracking-tight">
-                            Executive Leadership Board ({leadershipList.length})
-                        </h2>
-                        <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                            Elected officers and faculty advisors steering {club.name}
-                        </p>
+                    {/* Header & Controls Toolbar */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-xl bg-blue-100/70 text-[#0c72b8] flex items-center justify-center shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]">
+                                    <Users className="w-4 h-4" />
+                                </div>
+                                <h2 className="text-2xl font-extrabold text-slate-900 font-poppins tracking-tight">
+                                    Executive Board & Members ({validLeadershipList.length})
+                                </h2>
+                            </div>
+                            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                                Elected officers, committee members, and faculty advisors steering {club.name}
+                            </p>
+                        </div>
+
+                        {/* Top Filter Stats / Summary */}
+                        {validLeadershipList.length > 0 && (
+                            <div className="flex items-center gap-2 self-start md:self-auto">
+                                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#eef2f7] text-slate-600 shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff] border border-white/60">
+                                    Showing <strong className="text-slate-900">{displayedLeadership.length}</strong> of <strong className="text-slate-900">{filteredLeadership.length}</strong> {filteredLeadership.length === 1 ? 'member' : 'members'}
+                                </span>
+                            </div>
+                        )}
                     </div>
 
-                    {leadershipList.length === 0 ? (
+                    {/* Search, Sort & Section Filter Bar */}
+                    {validLeadershipList.length > 0 && (
+                        <div className="bg-[#eef2f7] p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] border border-slate-200/50 space-y-4">
+                            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                                {/* Search Box */}
+                                <div className="relative flex-1">
+                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <Search className="w-4 h-4" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={memberSearchQuery}
+                                        onChange={(e) => {
+                                            setMemberSearchQuery(e.target.value);
+                                            setShowAllMembers(false);
+                                        }}
+                                        placeholder="Search by name, role, department or phone..."
+                                        className="w-full pl-10 pr-10 py-2.5 bg-white/80 focus:bg-white text-xs sm:text-sm text-slate-800 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0c72b8]/30 transition-all placeholder:text-slate-400 shadow-sm"
+                                    />
+                                    {memberSearchQuery && (
+                                        <button
+                                            onClick={() => setMemberSearchQuery('')}
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                                            title="Clear search"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Sort Dropdown Selector */}
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <div className="flex items-center gap-1.5 px-3 py-2 bg-white/80 rounded-xl border border-slate-200 shadow-sm text-xs font-semibold text-slate-700">
+                                        <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                                        <span className="hidden sm:inline text-slate-500 font-normal">Sort:</span>
+                                        <select
+                                            value={memberSortBy}
+                                            onChange={(e) => setMemberSortBy(e.target.value as any)}
+                                            aria-label="Sort committee members"
+                                            className="bg-transparent font-bold text-slate-800 outline-none cursor-pointer text-xs"
+                                        >
+                                            <option value="hierarchy">Hierarchy / Order</option>
+                                            <option value="name-asc">Name (A → Z)</option>
+                                            <option value="name-desc">Name (Z → A)</option>
+                                            <option value="role">Role Title</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Section / Category Filter Pills */}
+                            <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60">
+                                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1 hidden sm:inline">
+                                    Sections:
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        setMemberRoleCategory('all');
+                                        setShowAllMembers(false);
+                                    }}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'all'
+                                            ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
+                                            : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                        }`}
+                                >
+                                    <span>All</span>
+                                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${memberRoleCategory === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                                        }`}>
+                                        {memberCategoryCounts.all}
+                                    </span>
+                                </button>
+
+                                {memberCategoryCounts.board > 0 && (
+                                    <button
+                                        onClick={() => {
+                                            setMemberRoleCategory('board');
+                                            setShowAllMembers(false);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'board'
+                                                ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
+                                                : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                            }`}
+                                    >
+                                        <Crown className="w-3 h-3" />
+                                        <span>Executive Board</span>
+                                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${memberRoleCategory === 'board' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                                            }`}>
+                                            {memberCategoryCounts.board}
+                                        </span>
+                                    </button>
+                                )}
+
+                                {memberCategoryCounts.advisors > 0 && (
+                                    <button
+                                        onClick={() => {
+                                            setMemberRoleCategory('advisors');
+                                            setShowAllMembers(false);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'advisors'
+                                                ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
+                                                : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                            }`}
+                                    >
+                                        <GraduationCap className="w-3.5 h-3.5" />
+                                        <span>Faculty & Advisors</span>
+                                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${memberRoleCategory === 'advisors' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                                            }`}>
+                                            {memberCategoryCounts.advisors}
+                                        </span>
+                                    </button>
+                                )}
+
+                                {memberCategoryCounts.members > 0 && (
+                                    <button
+                                        onClick={() => {
+                                            setMemberRoleCategory('members');
+                                            setShowAllMembers(false);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'members'
+                                                ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
+                                                : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                            }`}
+                                    >
+                                        <UserCheck className="w-3 h-3" />
+                                        <span>Committee Members</span>
+                                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${memberRoleCategory === 'members' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                                            }`}>
+                                            {memberCategoryCounts.members}
+                                        </span>
+                                    </button>
+                                )}
+
+                                {(memberSearchQuery || memberRoleCategory !== 'all') && (
+                                    <button
+                                        onClick={() => {
+                                            setMemberSearchQuery('');
+                                            setMemberRoleCategory('all');
+                                            setShowAllMembers(false);
+                                        }}
+                                        className="ml-auto text-xs text-rose-600 hover:text-rose-700 font-bold px-2 py-1 underline hover:no-underline transition-all cursor-pointer"
+                                    >
+                                        Reset filters
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Members Content / Grid */}
+                    {validLeadershipList.length === 0 ? (
                         <div className="bg-[#eef2f7] rounded-3xl p-12 text-center shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] border border-slate-200/50">
                             <Users className="w-10 h-10 text-slate-400 mx-auto mb-2" />
                             <p className="text-sm text-slate-500 font-medium">No executive leadership records listed yet for this committee.</p>
                         </div>
+                    ) : filteredLeadership.length === 0 ? (
+                        <div className="bg-[#eef2f7] rounded-3xl p-10 text-center shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] border border-slate-200/50 space-y-3">
+                            <Search className="w-10 h-10 text-slate-400 mx-auto" />
+                            <h3 className="text-base font-bold text-slate-800">No matching members found</h3>
+                            <p className="text-xs text-slate-500 max-w-md mx-auto">
+                                No members found matching &ldquo;{memberSearchQuery}&rdquo; in this category. Try searching with a different name, role or reset filters.
+                            </p>
+                            <button
+                                onClick={() => {
+                                    setMemberSearchQuery('');
+                                    setMemberRoleCategory('all');
+                                }}
+                                className="mt-2 px-4 py-2 bg-[#0c72b8] text-white rounded-xl text-xs font-bold shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:opacity-90 transition-all cursor-pointer"
+                            >
+                                Clear Search & Show All
+                            </button>
+                        </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-                            {leadershipList.map((member) => (
-                                <div
-                                    key={member.id}
-                                    className="bg-[#eef2f7] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[6px_6px_14px_#d1d9e6,-6px_-6px_14px_#ffffff] hover:shadow-[8px_8px_18px_#c8d2e2,-8px_-8px_18px_#ffffff] border border-white/80 transition-all hover:-translate-y-1"
-                                >
-                                    <div>
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <div className="w-15 h-15 rounded-full bg-[#eef2f7] p-1 flex items-center justify-center shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] border border-white/90 shrink-0">
-                                                <img
-                                                    src={member.avatarUrl}
-                                                    alt={member.name}
-                                                    referrerPolicy="no-referrer"
-                                                    className="w-full h-full rounded-full object-cover"
-                                                />
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                                {displayedLeadership.map((member) => {
+                                    const roleLower = (member.role || '').toLowerCase();
+                                    const isPresident = roleLower.includes('president') && !roleLower.includes('vice');
+                                    const isVicePresident = roleLower.includes('vice') && roleLower.includes('president');
+                                    const isAdvisor = roleLower.includes('advisor') || roleLower.includes('patron') || roleLower.includes('faculty');
+                                    const isSecretary = roleLower.includes('secretary');
+                                    const isTreasurer = roleLower.includes('treasurer');
+
+                                    // Role badge styling
+                                    let badgeBg = 'bg-[#eef2f7] text-[#0c72b8]';
+                                    if (isPresident) badgeBg = 'bg-amber-100 text-amber-900 border-amber-300';
+                                    else if (isVicePresident) badgeBg = 'bg-blue-100 text-blue-900 border-blue-300';
+                                    else if (isAdvisor) badgeBg = 'bg-rose-100 text-rose-900 border-rose-300';
+                                    else if (isSecretary) badgeBg = 'bg-emerald-100 text-emerald-900 border-emerald-300';
+                                    else if (isTreasurer) badgeBg = 'bg-purple-100 text-purple-900 border-purple-300';
+
+                                    const initials = (member.name || 'Member')
+                                        .split(' ')
+                                        .filter(Boolean)
+                                        .map((n) => n[0])
+                                        .slice(0, 2)
+                                        .join('')
+                                        .toUpperCase();
+
+                                    return (
+                                        <div
+                                            key={member.id}
+                                            className="bg-[#eef2f7] rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-[6px_6px_14px_#d1d9e6,-6px_-6px_14px_#ffffff] hover:shadow-[8px_8px_18px_#c8d2e2,-8px_-8px_18px_#ffffff] border border-white/80 transition-all hover:-translate-y-1"
+                                        >
+                                            <div>
+                                                <div className="flex items-center gap-4 mb-4">
+                                                    <div className="w-14 h-14 sm:w-15 sm:h-15 rounded-full bg-[#eef2f7] p-1 flex items-center justify-center shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] border border-white/90 shrink-0 overflow-hidden">
+                                                        {member.avatarUrl ? (
+                                                            <img
+                                                                src={member.avatarUrl}
+                                                                alt={member.name || 'Leadership Member'}
+                                                                referrerPolicy="no-referrer"
+                                                                className="w-full h-full rounded-full object-cover"
+                                                                onError={(e) => {
+                                                                    // Fallback to initials avatar on load error
+                                                                    (e.target as HTMLImageElement).style.display = 'none';
+                                                                    const fallbackEl = (e.target as HTMLElement).nextElementSibling as HTMLElement;
+                                                                    if (fallbackEl) fallbackEl.style.display = 'flex';
+                                                                }}
+                                                            />
+                                                        ) : null}
+                                                        <div
+                                                            className={`w-full h-full rounded-full flex items-center justify-center font-bold text-sm text-[#0c72b8] bg-blue-50 ${member.avatarUrl ? 'hidden' : 'flex'}`}
+                                                        >
+                                                            {initials}
+                                                        </div>
+                                                    </div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                                            <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider inline-block shadow-[2px_2px_4px_#d1d9e6,-2px_-2px_4px_#ffffff] border border-white/80 ${badgeBg}`}>
+                                                                {member.role || 'Executive Member'}
+                                                            </span>
+                                                            {isPresident && (
+                                                                <span className="text-[10px] bg-amber-500 text-white font-black px-1.5 py-0.2 rounded-full inline-flex items-center gap-0.5">
+                                                                    ★ Lead
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <h4 className="text-sm sm:text-base font-bold text-slate-900 mt-1 truncate" title={member.name || 'Executive Member'}>
+                                                            {member.name || 'Executive Member'}
+                                                        </h4>
+                                                        <p className="text-xs text-slate-500 truncate" title={member.department || club.name}>
+                                                            {member.department || 'Executive Committee'}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="min-w-0 flex-1">
-                                                <span className="bg-[#eef2f7] text-[#0c72b8] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider inline-block shadow-[2px_2px_4px_#d1d9e6,-2px_-2px_4px_#ffffff] border border-white/80">
-                                                    {member.role}
-                                                </span>
-                                                <h4 className="text-sm sm:text-base font-bold text-slate-900 mt-1 truncate">{member.name}</h4>
-                                                <p className="text-xs text-slate-500 truncate">{member.department}</p>
+
+                                            <div className="pt-3 border-t border-slate-300/40 space-y-2">
+                                                {member.phone ? (
+                                                    <a
+                                                        href={`tel:${member.phone.replace(/\s+/g, '')}`}
+                                                        className="w-full flex items-center justify-between px-3 py-2 bg-white/70 hover:bg-white text-slate-700 hover:text-[#0c72b8] rounded-xl text-xs font-bold transition-all border border-white/80 shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff] hover:shadow-[3px_3px_8px_#c8d2e2,-3px_-3px_8px_#ffffff] group/call cursor-pointer"
+                                                        title={`Call ${member.name} (${member.phone})`}
+                                                    >
+                                                        <div className="flex items-center gap-2 truncate">
+                                                            <div className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover/call:bg-blue-50 group-hover/call:text-[#0c72b8] transition-colors">
+                                                                <Phone className="w-3.5 h-3.5" />
+                                                            </div>
+                                                            <span className="font-semibold text-slate-800 group-hover/call:text-[#0c72b8] transition-colors truncate">
+                                                                {member.phone}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-wide bg-emerald-50 px-2 py-0.5 rounded-full group-hover/call:bg-blue-50 group-hover/call:text-[#0c72b8] transition-colors shrink-0 ml-1">
+                                                            Call
+                                                        </span>
+                                                    </a>
+                                                ) : (
+                                                    <div className="flex items-center gap-2 text-xs text-slate-400 py-1 px-1">
+                                                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                                        <span>Direct line via Campus Desk</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                    </div>
+                                    );
+                                })}
+                            </div>
 
-                                    <div className="pt-3 border-t border-slate-300/40">
-                                        {member.phone ? (
-                                            <a
-                                                href={`tel:${member.phone.replace(/\s+/g, '')}`}
-                                                className="w-full flex items-center justify-between px-3 py-2 bg-white/70 hover:bg-white text-slate-700 hover:text-[#0c72b8] rounded-xl text-xs font-bold transition-all border border-white/80 shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff] hover:shadow-[3px_3px_8px_#c8d2e2,-3px_-3px_8px_#ffffff] group/call cursor-pointer"
-                                                title={`Call ${member.name} (${member.phone})`}
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover/call:bg-blue-50 group-hover/call:text-[#0c72b8] transition-colors">
-                                                        <Phone className="w-3.5 h-3.5" />
-                                                    </div>
-                                                    <span className="font-semibold text-slate-800 group-hover/call:text-[#0c72b8] transition-colors">
-                                                        {member.phone}
-                                                    </span>
-                                                </div>
-                                                <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-wide bg-emerald-50 px-2 py-0.5 rounded-full group-hover/call:bg-blue-50 group-hover/call:text-[#0c72b8] transition-colors">
-                                                    Call
-                                                </span>
-                                            </a>
+                            {/* Show More / Show Less Toggle Button */}
+                            {hasMoreMembers && (
+                                <div className="flex justify-center pt-3">
+                                    <button
+                                        onClick={() => setShowAllMembers(!showAllMembers)}
+                                        className="inline-flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-[#eef2f7] text-[#0c72b8] text-sm font-extrabold hover:text-[#09568c] shadow-[4px_4px_10px_#d1d9e6,-4px_-4px_10px_#ffffff] active:shadow-[inset_3px_3px_6px_#d1d9e6,inset_-3px_-3px_6px_#ffffff] hover:-translate-y-0.5 border border-white/80 transition-all cursor-pointer"
+                                    >
+                                        <span>
+                                            {showAllMembers
+                                                ? 'Show Less'
+                                                : `Show More (${filteredLeadership.length - VISIBLE_MEMBERS_LIMIT} More Members)`}
+                                        </span>
+                                        {showAllMembers ? (
+                                            <ChevronUp className="w-4 h-4" />
                                         ) : (
-                                            <div className="flex items-center gap-2 text-xs text-slate-400 py-1">
-                                                <Phone className="w-3.5 h-3.5" />
-                                                <span>Phone not available</span>
-                                            </div>
+                                            <ChevronDown className="w-4 h-4" />
                                         )}
-                                    </div>
+                                    </button>
                                 </div>
-                            ))}
+                            )}
                         </div>
                     )}
                 </motion.section>

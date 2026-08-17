@@ -203,15 +203,25 @@ export const ClubDetailModal: React.FC<ClubDetailModalProps> = ({
                                         <span>{language === 'en' ? 'Key Achievements & Milestones' : 'मुख्य उपलब्धिहरू'}</span>
                                     </h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        {achievementsList.map((ach, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100"
-                                            >
-                                                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                                                <span className="text-xs font-medium text-gray-800">{ach}</span>
-                                            </div>
-                                        ))}
+                                        {achievementsList.map((ach, idx) => {
+                                            const title = typeof ach === 'string' ? ach : ach.title;
+                                            const desc = typeof ach === 'object' ? ach.description : undefined;
+                                            const date = typeof ach === 'object' ? ach.date : undefined;
+
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100"
+                                                >
+                                                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                                                    <div className="min-w-0 flex-1">
+                                                        <span className="text-xs font-semibold text-gray-800 block">{title}</span>
+                                                        {desc && <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">{desc}</p>}
+                                                        {date && <span className="text-[10px] text-[#0c72b8] font-bold mt-1 inline-block">{date}</span>}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}

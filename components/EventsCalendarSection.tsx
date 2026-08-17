@@ -350,17 +350,23 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
 
                 {/* Section Header & Sort Toggle */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-30px' }}
-                    transition={{ duration: 0.5 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8"
                 >
                     <div>
-                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 tracking-wide bg-[#eef2f7] text-[#0c72b8] shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff] border border-white/80">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.4, delay: 0.1 }}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold mb-3 tracking-wide bg-[#eef2f7] text-[#0c72b8] shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff] border border-white/80"
+                        >
                             <Calendar className="w-3.5 h-3.5 text-[#0c72b8]" />
                             <span>{language === 'en' ? 'Campus Activity Calendar' : 'क्याम्पस कार्यक्रम क्यालेन्डर'}</span>
-                        </div>
+                        </motion.div>
                         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-poppins">
                             {language === 'en' ? 'Upcoming Student Club Events' : 'आगामी विद्यार्थी क्लब कार्यक्रमहरू'}
                         </h2>
@@ -372,14 +378,20 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                     </div>
 
                     {/* Quick Date Sort & Counter */}
-                    <div className="flex items-center gap-3 self-start md:self-end">
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.15 }}
+                        className="flex items-center gap-3 self-start md:self-end"
+                    >
                         <span className="text-xs font-bold text-slate-500 hidden sm:inline-block">
                             {filteredEvents.length} {language === 'en' ? 'Events' : 'कार्यक्रमहरू'}
                         </span>
                         <button
                             type="button"
                             onClick={() => setSortAscending(!sortAscending)}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#eef2f7] hover:bg-white text-slate-700 hover:text-[#0c72b8] text-xs font-bold rounded-xl transition-all shadow-[4px_4px_8px_#d1d9e6,-4px_-4px_8px_#ffffff] border border-white/80 cursor-pointer shrink-0"
+                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#eef2f7] hover:bg-white text-slate-700 hover:text-[#0c72b8] text-xs font-bold rounded-xl transition-all shadow-[4px_4px_8px_#d1d9e6,-4px_-4px_8px_#ffffff] border border-white/80 cursor-pointer shrink-0 active:scale-95"
                             title="Sort events by chronological date"
                         >
                             <ArrowUpDown className="w-3.5 h-3.5 text-[#0c72b8]" />
@@ -389,15 +401,15 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                                     : (language === 'en' ? 'Latest First' : 'पछिल्लो मिति')}
                             </span>
                         </button>
-                    </div>
+                    </motion.div>
                 </motion.div>
 
                 {/* Search & Category Filter Toolbar */}
                 <motion.div
-                    initial={{ opacity: 0, y: 15 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-30px' }}
-                    transition={{ duration: 0.5, delay: 0.05 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
                     className="space-y-4 mb-8"
                 >
                     {/* Live Search Field */}
@@ -408,7 +420,7 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder={language === 'en' ? "Search events by title, club, venue..." : "शीर्षक, क्लब वा स्थान अनुसार खोज्नुहोस्..."}
-                            className="w-full pl-10 pr-10 py-2.5 bg-[#eef2f7] border border-white/80 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-[inset_2.5px_2.5px_5px_#d1d9e6,inset_-2.5px_-2.5px_5px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#0c72b8]"
+                            className="w-full pl-10 pr-10 py-2.5 bg-[#eef2f7] border border-white/80 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-[inset_2.5px_2.5px_5px_#d1d9e6,inset_-2.5px_-2.5px_5px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#0c72b8] transition-all"
                         />
                         {searchQuery && (
                             <button
@@ -440,9 +452,9 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                                         setFilterCategory(cat);
                                         setShowAllEvents(false);
                                     }}
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${isSelected
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 active:scale-95 ${isSelected
                                             ? 'neu-button-primary text-white shadow-md'
-                                            : 'bg-[#eef2f7] text-slate-700 hover:text-slate-900 shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] border border-white/80'
+                                            : 'bg-[#eef2f7] text-slate-700 hover:text-slate-900 shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] border border-white/80 hover:bg-white'
                                         }`}
                                 >
                                     <span>{cat}</span>
@@ -455,20 +467,45 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                     </div>
                 </motion.div>
 
-                {/* Events Cards Grid */}
+                {/* Events Cards Grid with Staggered Scroll Entrance */}
                 {displayedEvents.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                        {displayedEvents.map((evt) => {
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: '-40px' }}
+                        variants={{
+                            hidden: { opacity: 0 },
+                            visible: {
+                                opacity: 1,
+                                transition: {
+                                    staggerChildren: 0.1,
+                                    delayChildren: 0.05
+                                }
+                            }
+                        }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+                    >
+                        {displayedEvents.map((evt, idx) => {
                             const { month, day } = parseSafeDate(evt.date);
 
                             return (
                                 <motion.div
                                     key={evt.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: '-20px' }}
-                                    transition={{ duration: 0.4 }}
-                                    className="group bg-[#eef2f7] rounded-3xl p-5 sm:p-6 border border-white/80 shadow-[6px_6px_16px_#d1d9e6,-6px_-6px_16px_#ffffff] hover:shadow-[9px_9px_22px_#c8d2e2,-9px_-9px_22px_#ffffff] transition-all flex flex-col justify-between hover:-translate-y-1 relative"
+                                    variants={{
+                                        hidden: { opacity: 0, y: 35, scale: 0.97 },
+                                        visible: {
+                                            opacity: 1,
+                                            y: 0,
+                                            scale: 1,
+                                            transition: {
+                                                duration: 0.5,
+                                                ease: [0.22, 1, 0.36, 1],
+                                                delay: idx < 6 ? idx * 0.06 : 0
+                                            }
+                                        }
+                                    }}
+                                    whileHover={{ y: -6, transition: { duration: 0.25 } }}
+                                    className="group bg-[#eef2f7] rounded-3xl p-5 sm:p-6 border border-white/80 shadow-[6px_6px_16px_#d1d9e6,-6px_-6px_16px_#ffffff] hover:shadow-[9px_9px_22px_#c8d2e2,-9px_-9px_22px_#ffffff] transition-all flex flex-col justify-between relative"
                                 >
                                     <div>
                                         {/* Top Image Banner */}
@@ -546,7 +583,7 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                                             <button
                                                 type="button"
                                                 onClick={() => setActiveEventModal(evt)}
-                                                className="w-full py-2.5 px-4 bg-[#eef2f7] hover:bg-white text-slate-800 hover:text-[#0c72b8] text-xs sm:text-sm font-bold rounded-xl transition-all shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[5px_5px_12px_#c8d2e2,-5px_-5px_12px_#ffffff] border border-white/80 cursor-pointer flex items-center justify-center gap-2 group/btn"
+                                                className="w-full py-2.5 px-4 bg-[#eef2f7] hover:bg-white text-slate-800 hover:text-[#0c72b8] text-xs sm:text-sm font-bold rounded-xl transition-all shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[5px_5px_12px_#c8d2e2,-5px_-5px_12px_#ffffff] border border-white/80 cursor-pointer flex items-center justify-center gap-2 group/btn active:scale-[0.98]"
                                             >
                                                 <Ticket className="w-4 h-4 text-[#0c72b8] group-hover/btn:scale-110 transition-transform" />
                                                 <span>View Event Details</span>
@@ -556,10 +593,14 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                                 </motion.div>
                             );
                         })}
-                    </div>
+                    </motion.div>
                 ) : (
                     /* Empty Search & Filter State */
-                    <div className="bg-[#eef2f7] rounded-3xl p-10 sm:p-14 text-center border border-white/80 shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] max-w-lg mx-auto my-6">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-[#eef2f7] rounded-3xl p-10 sm:p-14 text-center border border-white/80 shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] max-w-lg mx-auto my-6"
+                    >
                         <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
                         <h3 className="text-base font-bold text-slate-900 font-poppins">
                             {language === 'en' ? 'No events match your criteria' : 'कुनै कार्यक्रमहरू फेला परेनन्'}
@@ -575,18 +616,26 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                                 setFilterCategory('All');
                                 setSearchQuery('');
                             }}
-                            className="mt-5 px-5 py-2.5 neu-button-primary text-white text-xs font-bold rounded-xl cursor-pointer"
+                            className="mt-5 px-5 py-2.5 neu-button-primary text-white text-xs font-bold rounded-xl cursor-pointer active:scale-95 transition-transform"
                         >
                             {language === 'en' ? 'Reset All Filters' : 'फिल्टरहरू रिसेट गर्नुहोस्'}
                         </button>
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Show More / Show Less Button */}
                 {filteredEvents.length > INITIAL_EVENTS_COUNT && (
-                    <div className="mt-10 flex justify-center">
-                        <button
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4 }}
+                        className="mt-10 flex justify-center"
+                    >
+                        <motion.button
                             type="button"
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
                             onClick={() => {
                                 if (showAllEvents) {
                                     setShowAllEvents(false);
@@ -612,8 +661,8 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                             ) : (
                                 <ChevronDown className="w-4 h-4 text-[#0c72b8] group-hover:translate-y-0.5 transition-transform" />
                             )}
-                        </button>
-                    </div>
+                        </motion.button>
+                    </motion.div>
                 )}
 
             </div>

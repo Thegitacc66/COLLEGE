@@ -94,11 +94,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         >
                             <div className="w-5 h-5 rounded-full bg-white p-0.5 flex items-center justify-center shrink-0 border border-slate-200 shadow-2xs">
                                 <img
-                                    src="/logo.jpg"
+                                    src="../logo2.jpg"
                                     alt="Campus Seal"
                                     className="w-full h-full object-contain rounded-full"
                                     onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/logo.svg';
+                                        (e.target as HTMLImageElement).src = '../logo2.jpg';
                                     }}
                                 />
                             </div>

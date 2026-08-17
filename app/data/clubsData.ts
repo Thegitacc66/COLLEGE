@@ -49,6 +49,16 @@ export interface ClubNotice {
     category: string;
 }
 
+export interface AchievementItem {
+    id?: string;
+    title: string;
+    description?: string;
+    date?: string;
+    category?: string;
+    image?: string;
+    badge?: string;
+}
+
 export interface Club {
     id: string;
     name: string;
@@ -65,7 +75,8 @@ export interface Club {
     meetingSchedule?: string;
     roomLocation?: string;
     leadership?: LeadershipMember[];
-    achievements?: string[];
+    achievements?: (string | AchievementItem)[];
+    achievementItems?: AchievementItem[];
     galleryImages?: string[];
     contactEmail?: string;
     featured?: boolean;
@@ -93,10 +104,10 @@ export interface Club {
 
 export const abitClubData: Club = {
     id: 'abit-club',
-    name: 'ABIT Club',
-    nepaliName: 'एबीआइटी क्लब',
+    name: 'ABIT Club (IT & Computer)',
+    nepaliName: 'एबीआइटी क्लब (सूचना तथा प्रविधि)',
     category: 'Technology & IT',
-    logo: '../abit.jpg',
+    logo: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAe3-3xLjjnq6yezaAWxXSXRILMiIFH1l-EKpmH4O94MztAwJVNS2twlf0XxDqvyusiWD9Q9osImht0-bMQj4dJaDvwQlj66cALWusLjc7nyHNz51zoZ-4C-oGU8JKi9uSt8ztve7-dUav5hvEa0X0R1nwItBoRNErFn6qBtFcehTPzZrhj-dDnj2scv9z0O-ukPX_qAJBg7GziTtXGPVs2xuKgxqhwsOAeLpjc78XG4Q1xSZI-SCKoB-n9WWlUf0ZEYN4WunktNbFN5g',
     accentColor: '#1d4ed8',
     description: 'The premier Information Technology student committee at Aadikavi Bhanubhakta Campus. Dedicated to fostering software development, artificial intelligence skills, cybersecurity awareness, web technologies, and tech innovation among students.',
     shortDescription: 'Empowering students in IT innovation, coding bootcamps, AI workshops, and hackathons.',
@@ -162,6 +173,7 @@ export const abitClubData: Club = {
             role: 'Vice President',
             department: 'BIM 5th Semester',
             email: 'pooja.sharma@student.abcampus.edu.np',
+            phone: '+977 9846198234',
             avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -170,14 +182,43 @@ export const abitClubData: Club = {
             role: 'Secretary',
             department: 'BIM 5th Semester',
             email: 'suman.shrestha@student.abcampus.edu.np',
+            phone: '+977 9860154389',
             avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face'
         }
     ],
     achievements: [
         'Organized Inter-College Hackathon "Tanahun Tech Fest 2025"',
         'Trained 250+ students in Full-Stack Web Development & React',
-        'Developed campus digital notice board & student feedback portal',
-        '1st Runner Up in Gandaki Province Robotics Championship'
+        'Developed campus digital notice board & student feedback portal'
+    ],
+    achievementItems: [
+        {
+            id: 'ach-1',
+            title: 'Organized Inter-College Hackathon "Tanahun Tech Fest 2025"',
+            description: 'Brought together over 180+ developers, designers, and innovators across 12 colleges in Gandaki Province for 36 hours of competitive coding.',
+            date: 'Jan 2025',
+            category: 'Hackathon & Innovation',
+            badge: 'Major Milestone',
+            image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80'
+        },
+        {
+            id: 'ach-2',
+            title: 'Trained 250+ Students in Full-Stack Web Development & React',
+            description: 'Delivered an intensive 6-week hands-on bootcamp covering modern JavaScript, TypeScript, React 18, and API architecture with 94% course completion rate.',
+            date: 'Nov 2024',
+            category: 'Technical Training',
+            badge: 'Capacity Building',
+            image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80'
+        },
+        {
+            id: 'ach-3',
+            title: 'Developed Campus Digital Notice Board & Student Feedback Portal',
+            description: 'Engineered an in-house digital signage software and mobile-responsive portal replacing physical paper notices across all campus departments.',
+            date: 'Aug 2024',
+            category: 'Campus Digitalization',
+            badge: 'Institutional Impact',
+            image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
+        }
     ],
     galleryImages: [
         'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80',
@@ -188,8 +229,8 @@ export const abitClubData: Club = {
 
 export const alumniWelfareData: Club = {
     id: 'free-student-union',
-    name: 'Free Student Union',
-    nepaliName: 'स्वतन्त्र विद्यार्थी युनियन',
+    name: 'Free Student Union & Alumni Welfare',
+    nepaliName: 'स्वतन्त्र विद्यार्थी युनियन तथा पूर्वविद्यार्थी कल्याण',
     category: 'Student Welfare',
     logo: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCTjRGdyZbbonJMArck2KAjZKW90z39NnSUFKCejek5yjEyOC_93E0sgxFCj76NJUsqWvFokGGa2RIfFWQikaX4XR8CmX1M8mmcQq4VIqRV0h8QKQDdPR3uExr1dpHswI2HME96rnsuKI2-3x9xOs6G2XLSS-jtc-s2s6IJ7SGOsHHFUSTX2LwSuJpkiB3tSWK1JWeVlBJbM8CUNHcwz7CkdrxWrpyDvRpsLf3jFnFo1pVzCaJqhi7iEdUq2tzHs_StIdsKEhTIIIhNPA',
     accentColor: '#991b1b',
@@ -246,6 +287,7 @@ export const alumniWelfareData: Club = {
             role: 'Vice President',
             department: 'MA Nepali',
             email: 'saraswati.d@student.abcampus.edu.np',
+            phone: '+977 9846234567',
             avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -254,6 +296,7 @@ export const alumniWelfareData: Club = {
             role: 'Secretary',
             department: 'BBS 4th Year',
             email: 'deepak.thapa@student.abcampus.edu.np',
+            phone: '+977 9860345678',
             avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -262,6 +305,34 @@ export const alumniWelfareData: Club = {
         'Established 24/7 Campus Emergency Medical Relief Fund',
         'Constructed student recreation gazebo and upgraded sports facilities',
         'Organized annual Campus Week with 3,000+ attendees'
+    ], achievementItems: [
+        {
+            id: 'ach-1',
+            title: 'Organized Inter-College Hackathon "Tanahun Tech Fest 2025"',
+            description: 'Brought together over 180+ developers, designers, and innovators across 12 colleges in Gandaki Province for 36 hours of competitive coding.',
+            date: 'Jan 2025',
+            category: 'Hackathon & Innovation',
+            badge: 'Major Milestone',
+            image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80'
+        },
+        {
+            id: 'ach-2',
+            title: 'Trained 250+ Students in Full-Stack Web Development & React',
+            description: 'Delivered an intensive 6-week hands-on bootcamp covering modern JavaScript, TypeScript, React 18, and API architecture with 94% course completion rate.',
+            date: 'Nov 2024',
+            category: 'Technical Training',
+            badge: 'Capacity Building',
+            image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80'
+        },
+        {
+            id: 'ach-3',
+            title: 'Developed Campus Digital Notice Board & Student Feedback Portal',
+            description: 'Engineered an in-house digital signage software and mobile-responsive portal replacing physical paper notices across all campus departments.',
+            date: 'Aug 2024',
+            category: 'Campus Digitalization',
+            badge: 'Institutional Impact',
+            image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
+        }
     ],
     galleryImages: [
         'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&auto=format&fit=crop&q=80'
@@ -271,72 +342,208 @@ export const alumniWelfareData: Club = {
 export const bbaClubData: Club = {
     id: 'bba-cloud',
     name: 'ABC BBA Student Cloud',
-    nepaliName: 'एबीसी बीबीए विद्यार्थी क्लाउड ',
-    category: 'Business & Management',
+    nepaliName: 'एबीसी बीबीए विद्यार्थी क्लाउड',
+    category: 'Management',
     logo: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDzUnP6eSb8SEAUNO-OUesJ2keSdthciymO40Cl281oQvu0Z6K9e9vEN3jfIL8FyM0cqoaDXulhAVrJTq4KX7BqmwuYNzXitE8Bg7hTTz38qgownOQKZUGnZ0y_oL6FVRzNUw_Kk-wOtYFufn_WTwgEycekVZXEtDOFlw8D1IddoCdmf0pgnc5Z2SjcjuAc6l6Pyh-fL-e32hXYQM9XZY-lzfwVLbleDx_KDouzX24FnpCA_u9HpD-2TEw3eotxPkPAE45vEmKQrtP_jA',
     accentColor: '#1d4ed8',
-    description: 'The elite business management student circle uniting Bachelor of Business Administration students. Focuses on corporate exposure, business model pitching, stock trading simulation, leadership summits, and entrepreneurship incubator sessions.',
-    shortDescription: 'Nurturing future business leaders, entrepreneurs, marketers, and corporate strategists.',
-    establishedYear: 2015,
+    description: 'ABC BBA Student Cloud is a student-led platform at Aadikavi Bhanubhakta Campus, dedicated to the academic, professional, and personal growth of BBA students. Through seminars, training sessions, and field visits, the club builds leadership, teamwork, and practical skills, fostering a united and collaborative student community.',
+    establishedYear: 2076,
     memberCount: 85,
-    facultyAdvisor: 'Dr. Vishnu Hari Pandit',
+    facultyAdvisor: 'Chij Kumar Shrestha',
     president: 'Ashim Bhandari',
     meetingSchedule: 'Wednesdays at 4:00 PM',
     roomLocation: 'Management Block, Conference Hall B',
-    contactEmail: 'bbacloud@abcampus.edu.np',
+    contactEmail: 'bbastudentcloud1@gmail.com',
     featured: true,
-    vision: 'To nurture world-class corporate leaders, startup founders, and ethical management professionals from Aadikavi Bhanubhakta Campus.',
+    vision: 'To be a leading student platform that empowers BBA students through diverse academic, professional, and leadership opportunities, fostering a skilled and collaborative student community.',
     mission: [
-        'Organize annual BizVenture pitch deck challenges and management summits.',
-        'Facilitate stock market trading simulations and financial analysis workshops.',
-        'Connect students with corporate internships and bank orientations.',
-        'Publish management research digests and student business case studies.'
+        'ABC BBA Student Cloud is committed to organizing seminars, workshops, training sessions, and community-oriented initiatives in coordination with Aadikavi Bhanubhakta Campus. Through these programs, the club aims to enhance student practical knowledge, leadership abilities, communication skills, and professional competence.'
     ],
     presidentMessage: {
         senderName: 'Ashim Bhandari',
         senderRole: 'President, BBA Summit Circle',
-        message: 'Welcome to BBA Summit Circle! Our mission is to bridge theoretical classroom learning with real-world corporate strategy, leadership fests, and startup execution.',
-        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face'
+        message: 'It is a privilege to serve as President of ABC BBA Student Cloud, dedicated to the academic, professional, and personal growth of BBA students. We provide a platform for students to connect, collaborate, and build leadership through academic and extracurricular activities, believing true learning extends beyond the classroom. We remain committed to fostering a culture of unity, teamwork, and excellence. I encourage all BBA students to actively participate and help make our club stronger and more impactful.',
+        avatarUrl: '../bba/asim.webp'
     },
     advisorMessage: {
-        senderName: 'Dr. Vishnu Hari Pandit',
-        senderRole: 'Faculty Advisor, Dept of Management',
+        senderName: 'Chij Kumar Shrestha',
+        senderRole: 'Faculty Advisor, BBA Program Head',
         message: 'BBA Summit provides an exceptional platform for students to hone strategic thinking, business ethics, and entrepreneurial initiative.',
-        avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face'
+        avatarUrl: '../bba/chij2.webp'
     },
     manifesto: {
         title: 'BBA Summit Leadership & Professional Ethics Manifesto',
         points: [
-            'Corporate Exposure: Arranging industrial visits and corporate guest sessions every semester.',
-            'Startup Mentorship: Supporting student entrepreneurs with pitch deck refinement and seed networking.',
-            'Academic Excellence: Maintaining high standards in business research and case study competitions.'
+            'Promote unity, leadership, academic excellence, teamwork, and personal development among BBA students. ',
+            'Encourage active participation in academic, cultural, social, sports, and extracurricular activities. ',
+            'Provide opportunities to build practical skills, share ideas, showcase talents, and take on leadership responsibilities. ',
+            'Contribute to the overall growth, confidence, and professional development of BBA students at Aadikavi Bhanubhakta Campus'
         ]
     },
-    history: 'Established in 2015, BBA Summit Circle has hosted multiple national management fests, stock trading challenges, and corporate interaction programs.',
+    history: 'Established in 2076 B.S. at Aadikavi Bhanubhakta Campus, Damauli, Tanahun, ABC BBA Student Cloud brings BBA students together on a common platform for academic growth, leadership, teamwork, and communication. Founded under the leadership of its first President, Samundra Dhakal, the club encourages student participation in academic, social, cultural, sports, and leadership activities. Today, it continues to serve as a student-led platform fostering collaboration and the overall development of BBA students within the campus',
     leadership: [
         {
             id: 'bba1',
-            name: 'Dr. Vishnu Hari Pandit',
+            name: 'Chij Kumar Shrestha',
             role: 'Faculty Advisor',
             department: 'Department of Management',
-            email: 'vishnu.pandit@abcampus.edu.np',
-            avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face'
+            email: '',
+            phone: '+977 9856011223',
+            avatarUrl: '../bba/chij2.webp'
         },
         {
             id: 'bba2',
             name: 'Ashim Bhandari',
             role: 'President',
             department: 'BBA 6th Semester',
-            email: 'ashim.bhandari@student.abcampus.edu.np',
-            avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face'
-        },
+            phone: '+977 9817152251',
+            avatarUrl: '../bba/asim.webp',
+            email: ""
+        }
+        ,
         {
             id: 'bba3',
-            name: 'Riya Gurung',
-            role: 'Vice President',
-            department: 'BBA 4th Semester',
-            email: 'riya.gurung@student.abcampus.edu.np',
-            avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face'
+            name: 'Shreedhar Khatri',
+            role: 'Vice - President',
+            department: 'BBA 6th Semester',
+            phone: '+977 9829181846',
+            avatarUrl: '../bba/sri.webp',
+            email: ""
+        },
+        {
+            id: 'bba4',
+            name: 'Shristi Shrestha',
+            role: 'Secretary',
+            department: 'BBA 6th Semester',
+            phone: '+977 9806765816',
+            avatarUrl: '../bba/sristi.webp',
+            email: ""
+        },
+        {
+            id: 'bba5',
+            name: 'Sushma Thapa',
+            role: 'Joint - Secretary',
+            department: 'BBA 6th Semester',
+            phone: '+977 9829196990',
+            avatarUrl: '../bba/susma.webp',
+            email: ""
+        },
+        {
+            id: 'bba6',
+            name: 'Sabita Adhikari',
+            role: 'Treasurer',
+            department: 'BBA 6th Semester',
+            phone: '+977 9824104395',
+            avatarUrl: '../bba/sabita.webp',
+            email: ""
+        },
+        {
+            id: 'bba7',
+            name: 'Safalta Gauli',
+            role: 'Spokesperson',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/safalta.webp',
+            email: ""
+        },
+        {
+            id: 'bba8',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba9',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba10',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba11',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba12',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba13',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba14',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba15',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba16',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba17',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
+        },
+        {
+            id: 'bba18',
+            name: '',
+            role: '',
+            department: 'BBA 6th Semester',
+            phone: '+977 ',
+            avatarUrl: '../bba/',
+            email: ""
         }
     ],
     achievements: [
@@ -401,6 +608,7 @@ export const literatureForumData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Nepali Literature',
             email: 'ramchandra@abcampus.edu.np',
+            phone: '+977 9856022334',
             avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -409,6 +617,7 @@ export const literatureForumData: Club = {
             role: 'President',
             department: 'MA Nepali 2nd Year',
             email: 'manoj.pokharel@student.abcampus.edu.np',
+            phone: '+977 9812345678',
             avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -471,6 +680,7 @@ export const healthSportsData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Accountancy',
             email: 'ganesh.shrestha@abcampus.edu.np',
+            phone: '+977 9856033445',
             avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -479,6 +689,7 @@ export const healthSportsData: Club = {
             role: 'President',
             department: 'BBS 4th Year',
             email: 'sita.adhikari@student.abcampus.edu.np',
+            phone: '+977 9867891234',
             avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -541,6 +752,7 @@ export const socialServiceData: Club = {
             role: 'Faculty Advisor',
             department: 'Faculty of Public Administration',
             email: 'janak.kafle@abcampus.edu.np',
+            phone: '+977 9856044556',
             avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -549,6 +761,7 @@ export const socialServiceData: Club = {
             role: 'President',
             department: 'BBA 8th Semester',
             email: 'bikash.poudel@student.abcampus.edu.np',
+            phone: '+977 9846123987',
             avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -610,6 +823,7 @@ export const redCrossData: Club = {
             role: 'Faculty Advisor',
             department: 'Health & Physical Education',
             email: 'niranjan@abcampus.edu.np',
+            phone: '+977 9856055667',
             avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -618,6 +832,7 @@ export const redCrossData: Club = {
             role: 'President',
             department: 'B.Ed 3rd Year',
             email: 'sunita.shrestha@student.abcampus.edu.np',
+            phone: '+977 9856123456',
             avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -680,6 +895,7 @@ export const extraCurricularData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Science & Research',
             email: 'hari.devkota@abcampus.edu.np',
+            phone: '+977 9856066778',
             avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -688,6 +904,7 @@ export const extraCurricularData: Club = {
             role: 'President',
             department: 'B.Sc 4th Year',
             email: 'prashant.a@student.abcampus.edu.np',
+            phone: '+977 9805678901',
             avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -751,6 +968,7 @@ export const sportsBoardData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Physical Education',
             email: 'lal.thapa@abcampus.edu.np',
+            phone: '+977 9856077889',
             avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -759,6 +977,7 @@ export const sportsBoardData: Club = {
             role: 'President',
             department: 'BBS 3rd Year',
             email: 'roshan.gurung@student.abcampus.edu.np',
+            phone: '+977 9846789012',
             avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -821,6 +1040,7 @@ export const culturalClubData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Sociology & Culture',
             email: 'saraswati.sen@abcampus.edu.np',
+            phone: '+977 9856088990',
             avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -829,6 +1049,7 @@ export const culturalClubData: Club = {
             role: 'President',
             department: 'BA 3rd Year',
             email: 'manisha.thapa@student.abcampus.edu.np',
+            phone: '+977 9816543210',
             avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -891,6 +1112,7 @@ export const academicCommitteeData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Mathematics & Statistics',
             email: 'binod.sharma@abcampus.edu.np',
+            phone: '+977 9856099001',
             avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -899,6 +1121,7 @@ export const academicCommitteeData: Club = {
             role: 'President',
             department: 'B.Sc 3rd Year',
             email: 'aayush.karki@student.abcampus.edu.np',
+            phone: '+977 9860123789',
             avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -961,6 +1184,7 @@ export const disasterManagementData: Club = {
             role: 'Faculty Advisor',
             department: 'Head Librarian',
             email: 'prakash.library@abcampus.edu.np',
+            phone: '+977 9856013579',
             avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -969,6 +1193,7 @@ export const disasterManagementData: Club = {
             role: 'President',
             department: 'BA English 3rd Year',
             email: 'kirtan.j@student.abcampus.edu.np',
+            phone: '+977 9856781234',
             avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -1031,6 +1256,7 @@ export const ecoEnvironmentData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Environmental Science',
             email: 'kamala.sharma@abcampus.edu.np',
+            phone: '+977 9856024680',
             avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -1039,6 +1265,7 @@ export const ecoEnvironmentData: Club = {
             role: 'President',
             department: 'B.Sc 3rd Year',
             email: 'aarav.giri@student.abcampus.edu.np',
+            phone: '+977 9846345678',
             avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -1102,6 +1329,7 @@ export const womenEmpowermentData: Club = {
             role: 'Faculty Advisor',
             department: 'Department of Humanities',
             email: 'saraswati.adhikari@abcampus.edu.np',
+            phone: '+977 9856035791',
             avatarUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=300&h=300&fit=crop&crop=face'
         },
         {
@@ -1110,6 +1338,7 @@ export const womenEmpowermentData: Club = {
             role: 'President',
             department: 'BBA 4th Year',
             email: 'puja.sharma@abcampus.edu.np',
+            phone: '+977 9804126359',
             avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face'
         }
     ],
@@ -1146,13 +1375,13 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
     {
         id: 'e1',
         clubId: 'abit-club',
-        clubName: 'ABIT Club',
+        clubName: 'ABIT Club (IT & Computer)',
         title: 'Full-Stack React & AI Agent Hackathon 2026',
         date: '2026-08-25',
         time: '09:00 AM - 05:00 PM',
         venue: 'IT Lab 204 & Main Auditorium',
-        category: 'Workshop & Competition',
-        description: 'Build innovative web applications integrated with AI models. Prize pool worth NPR 50,000 with certificates for all participants!',
+        category: 'Workshop & Tech',
+        description: 'Build innovative web applications integrated with AI models. Prize pool worth NPR 50,000 with certificates and mentorship for all participants!',
         capacity: 100,
         registeredCount: 68,
         image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80'
@@ -1160,13 +1389,13 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
     {
         id: 'e2',
         clubId: 'bba-cloud',
-        clubName: 'BBA Cloud',
-        title: 'Startup Pitch Deck & Investor Summit',
+        clubName: 'BBA Cloud (Business Summit)',
+        title: 'Startup Pitch Deck & Youth Investor Summit',
         date: '2026-08-28',
         time: '11:00 AM - 03:00 PM',
         venue: 'Management Seminar Hall',
         category: 'Business & Pitch',
-        description: 'Present your business idea to prominent entrepreneurs and regional bank managers. Top 3 ideas win seed funding mentoring.',
+        description: 'Present your business and venture idea to prominent entrepreneurs, chamber of commerce delegates, and regional bank managers. Top 3 ideas win seed funding mentorship.',
         capacity: 80,
         registeredCount: 42,
         image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&auto=format&fit=crop&q=80'
@@ -1174,13 +1403,13 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
     {
         id: 'e3',
         clubId: 'free-student-union',
-        clubName: 'Free Student Union',
+        clubName: 'Free Student Union (FSU)',
         title: 'Annual Campus Sports & Cultural Week 2026',
         date: '2026-09-02',
         time: '08:00 AM - 05:00 PM',
         venue: 'Campus Main Ground & Bhanu Hall',
-        category: 'Campus Grand Event',
-        description: 'Inter-department cricket, volleyball, dance, poetry, debate, and music competitions celebrating campus unity.',
+        category: 'Sports & Athletics',
+        description: 'Inter-department cricket, volleyball, futsal, dance, poetry, debate, and musical competitions celebrating campus unity and athletic talent.',
         capacity: 2000,
         registeredCount: 890,
         image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&auto=format&fit=crop&q=80'
@@ -1188,13 +1417,13 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
     {
         id: 'e4',
         clubId: 'nepal-youth-red-cross',
-        clubName: 'Nepal Youth Red Cross',
+        clubName: 'Nepal Youth Red Cross Circle',
         title: 'Grand Blood Donation & Free Health Screening Camp',
         date: '2026-09-10',
         time: '09:30 AM - 03:30 PM',
         venue: 'Student Recreation Gazebo',
-        category: 'Health & Humanitarian',
-        description: 'Donate blood to save lives. Free eye checkup, blood pressure, and blood sugar tests provided by Damauli Hospital doctors.',
+        category: 'Humanitarian & Health',
+        description: 'Donate blood to save lives. Free eye checkup, blood pressure, and blood sugar tests provided by Damauli Hospital medical staff and volunteers.',
         capacity: 300,
         registeredCount: 145,
         image: 'https://images.unsplash.com/photo-1615461066841-6116e61058f4?w=800&auto=format&fit=crop&q=80'
@@ -1203,15 +1432,57 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
         id: 'e5',
         clubId: 'aadikavi-nepali-creative-form',
         clubName: 'Aadikavi Nepali Creative Form',
-        title: 'Inter-College Poetry & Gazal Competition',
+        title: 'Inter-College Poetry & Gazal Recitation Competition',
         date: '2026-09-15',
         time: '01:00 PM - 04:30 PM',
         venue: 'Bhanu Memorial Hall',
-        category: 'Literature & Poetry',
-        description: 'Showcase your poetic rhythm and ghazal recitation skills. Renowned Nepalese poets will grace the judge panel.',
+        category: 'Literature & Arts',
+        description: 'Showcase your poetic rhythm, storytelling, and ghazal recitation skills. Renowned Nepalese poets and litterateurs will grace the evaluation panel.',
         capacity: 150,
         registeredCount: 78,
         image: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+        id: 'e6',
+        clubId: 'nature-conservation-club',
+        clubName: 'Nature Conservation & Eco Club',
+        title: 'Clean Seti River Watershed & Tree Plantation Drive',
+        date: '2026-09-22',
+        time: '07:30 AM - 12:00 PM',
+        venue: 'Seti River Bank & Campus Arboretum',
+        category: 'Eco & Environment',
+        description: 'Environmental cleanliness drive and planting 200 indigenous saplings along the riparian zone. Includes gloves, seedling distribution, and eco-badges for volunteers.',
+        capacity: 120,
+        registeredCount: 94,
+        image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+        id: 'e7',
+        clubId: 'women-empowerment-cell',
+        clubName: 'Women Empowerment Cell',
+        title: 'Women in Leadership & Tech Career Masterclass',
+        date: '2026-09-29',
+        time: '01:30 PM - 04:30 PM',
+        venue: 'Conference Hall A',
+        category: 'Workshop & Tech',
+        description: 'Interactive session featuring inspiring female leaders in business, governance, and technology discussing career growth, negotiation, and entrepreneurship.',
+        capacity: 100,
+        registeredCount: 65,
+        image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+        id: 'e8',
+        clubId: 'cultural-and-musical-club',
+        clubName: 'Cultural & Musical Club',
+        title: 'Gandaki Folk Music & Traditional Dance Fiesta',
+        date: '2026-10-05',
+        time: '02:00 PM - 06:00 PM',
+        venue: 'Main Open-Air Amphitheatre',
+        category: 'Literature & Arts',
+        description: 'Celebrating traditional folk instruments (Madal, Sarangi, Bansuri) with student music bands and cultural group dance performances.',
+        capacity: 500,
+        registeredCount: 310,
+        image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80'
     }
 ];
 

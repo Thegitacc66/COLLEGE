@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Mail, Phone, MapPin, Globe } from 'lucide-react';
-
 import { Language } from '../app/data/clubsData';
 
 export const CampusLogoBadge: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }> = ({ size = 'md', className = '' }) => {
@@ -13,7 +12,7 @@ export const CampusLogoBadge: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: 
         <div className={`${dimensions} bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/40 shadow-sm shrink-0 ${className}`}>
             <div className="w-full h-full rounded-full bg-white p-0 flex items-center justify-center overflow-hidden">
                 <img
-                    src='../logo1.png'
+                    src='../logo2.jpg'
                     alt="Aadikavi Bhanubhakta Campus Logo"
                     className="w-full h-full object-contain rounded-full"
                     referrerPolicy="no-referrer"
@@ -29,18 +28,61 @@ export const CampusLogoBadge: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: 
 export interface FooterProps {
     language?: Language;
     onNavigateToCategory?: (category: string) => void;
+    onNavigateHome?: () => void;
+    onNavigateToCommittees?: () => void;
+    onNavigateToEvents?: () => void;
+    onNavigateToAbout?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
     language = 'en',
-    onNavigateToCategory = () => { }
+    onNavigateToCategory = () => { },
+    onNavigateHome,
+    onNavigateToCommittees,
+    onNavigateToEvents,
+    onNavigateToAbout
 }) => {
-    const scrollToCommittees = () => {
-        const el = document.getElementById('clubs-dashboard-section');
+    const smoothScrollToElement = (elementId: string) => {
+        const el = document.getElementById(elementId);
         if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
+            const headerOffset = 80;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({
+                top: Math.max(0, offsetPosition),
+                behavior: 'smooth'
+            });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
+
+    const handleAboutClick = () => {
+        if (onNavigateToAbout) {
+            onNavigateToAbout();
+        } else if (onNavigateHome) {
+            onNavigateHome();
+        } else {
+            smoothScrollToElement('about-campus-section');
+        }
+    };
+
+    const handleCommitteesClick = () => {
+        if (onNavigateToCommittees) {
+            onNavigateToCommittees();
+        } else {
+            smoothScrollToElement('clubs-dashboard-section');
+        }
+    };
+
+    const handleEventsClick = () => {
+        if (onNavigateToEvents) {
+            onNavigateToEvents();
+        } else {
+            smoothScrollToElement('events-calendar-section');
+        }
+    };
+
     return (
         <footer className="bg-[#0c72b8] pt-16 text-white pb-8 shadow-[0_-10px_25px_rgba(12,114,184,0.25)] overflow-hidden">
             <motion.div
@@ -52,13 +94,18 @@ export const Footer: React.FC<FooterProps> = ({
             >
                 {/* Brand Column */}
                 <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-3">
-                        <CampusLogoBadge size="md" />
+                    <button
+                        type="button"
+                        onClick={handleAboutClick}
+                        className="flex items-center gap-3 text-left group cursor-pointer"
+                        title="Aadikavi Bhanubhakta Campus Home"
+                    >
+                        <CampusLogoBadge size="md" className="group-hover:scale-105 transition-transform" />
                         <div className="flex flex-col justify-center">
-                            <h2 className="text-xl font-bold text-white leading-tight">Aadikavi Campus</h2>
+                            <h2 className="text-xl font-bold text-white leading-tight group-hover:text-blue-100 transition-colors">Aadikavi Campus</h2>
                             <p className="text-[11px] font-semibold tracking-wider text-blue-100">QAA CERTIFIED</p>
                         </div>
-                    </div>
+                    </button>
                     <p className="text-sm text-blue-100 max-w-xs leading-relaxed font-normal">
                         {language === 'en'
                             ? 'Empowering students through unity, creativity, and excellence for 37+ years.'
@@ -94,31 +141,30 @@ export const Footer: React.FC<FooterProps> = ({
                         {language === 'en' ? 'Quick Links' : 'त्वरित लिङ्कहरू'}
                     </h3>
                     <button
-                        onClick={() => {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer"
+                        type="button"
+                        onClick={handleAboutClick}
+                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer hover:underline"
                     >
                         {language === 'en' ? 'About Campus' : 'क्याम्पसको बारेमा'}
                     </button>
                     <button
-                        onClick={scrollToCommittees}
-                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer"
+                        type="button"
+                        onClick={handleCommitteesClick}
+                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer hover:underline"
                     >
                         {language === 'en' ? 'Committees Directory' : 'समिति डाइरेक्टरी'}
                     </button>
                     <button
-                        onClick={() => {
-                            const el = document.getElementById('events-calendar-section');
-                            if (el) el.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer"
+                        type="button"
+                        onClick={handleEventsClick}
+                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer hover:underline"
                     >
                         {language === 'en' ? 'Upcoming Events' : 'आगामी कार्यक्रमहरू'}
                     </button>
                     <button
-                        onClick={scrollToCommittees}
-                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer"
+                        type="button"
+                        onClick={handleCommitteesClick}
+                        className="text-sm text-blue-100 hover:text-white text-left transition-colors cursor-pointer hover:underline"
                     >
                         {language === 'en' ? 'Explore Student Committees' : 'विद्यार्थी समितिहरू हेर्नुहोस्'}
                     </button>
