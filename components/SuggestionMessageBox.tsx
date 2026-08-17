@@ -30,6 +30,7 @@ const ROLES = [
     'Faculty / Teacher',
     'Club Member',
     'Campus Staff',
+    'Campus Executive',
     'Visitor / Parent'
 ];
 
