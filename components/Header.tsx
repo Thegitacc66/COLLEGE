@@ -41,7 +41,7 @@ export const CampusLogoBadge: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: 
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-0 shadow-2xs overflow-hidden">
                 <img
                     src='../logo2.jpg'
-                    alt="Aadikavi Bhanubhakta Campus FSU Logo"
+                    alt="Aadikavi Bhanubhakta Campus"
                     className="w-full h-full object-contain rounded-full"
                     referrerPolicy="no-referrer"
                     onError={(e) => {
