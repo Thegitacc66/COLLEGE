@@ -1213,20 +1213,5 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
     },
 
     // Humanities
-    ,
-    {
-        id: 'evt-human-1',
-        clubId: 'human-club',
-        clubName: 'Humanities Club',
-        title: 'Educational Seminar',
-        date: '2026-09-22',
-        time: '10:00 AM - 02:00 PM',
-        venue: 'Red Cross Resource Room & Courtyard',
-        category: 'Emergency Training',
-        description: 'Practical training on CPR, emergency bandage techniques, stretcher transport, and rapid earthquake evacuation response.',
-        capacity: 90,
-        registeredCount: 65,
-        image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80'
-    },
 
 ];
