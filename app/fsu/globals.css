@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+    --font-devanagari: "Noto Sans Devanagari", sans-serif;
+}
+
+html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+    font-family: "Quicksand", var(--font-sans), sans-serif;
+    background-color: #f9f9fe;
+    color: #1a1c20;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#root,
+#__next {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+    box-sizing: border-box;
+}
+
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 37, 77, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 37, 77, 0.4);
+}
+
+/* Soft UI Utility Classes without colored edge glows */
+.neu-bg {
+    background-color: #eef2f7;
+}
+
+.neu-flat {
+    background-color: #eef2f7;
+    box-shadow: 6px 6px 14px #d1d9e6, -6px -6px 14px #ffffff;
+}
+
+.neu-flat-sm {
+    background-color: #eef2f7;
+    box-shadow: 3px 3px 8px #d1d9e6, -3px -3px 8px #ffffff;
+}
+
+.neu-flat-lg {
+    background-color: #eef2f7;
+    box-shadow: 10px 10px 24px #c2cddc, -10px -10px 24px #ffffff;
+}
+
+.neu-pressed {
+    background-color: #eef2f7;
+    box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+}
+
+.neu-pressed-sm {
+    background-color: #eef2f7;
+    box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff;
+}
+
+.neu-button {
+    background-color: #eef2f7;
+    box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #ffffff;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.neu-button:hover {
+    box-shadow: 6px 6px 14px #c2cddc, -6px -6px 14px #ffffff;
+    transform: translateY(-1px);
+}
+
+.neu-button:active,
+.neu-button-active {
+    box-shadow: inset 3px 3px 7px #c2cddc, inset -3px -3px 7px #ffffff;
+    transform: translateY(0);
+}
+
+.neu-button-primary {
+    background-color: #0c72b8;
+    color: #ffffff;
+    box-shadow: 4px 4px 10px #c2cddc, -3px -3px 8px #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.neu-button-primary:hover {
+    box-shadow: 6px 6px 14px #b8c4d6, -4px -4px 10px #ffffff;
+    transform: translateY(-1px);
+}
+
+.neu-button-red {
+    background-color: #b91c1c;
+    color: #ffffff;
+    box-shadow: 4px 4px 10px #c2cddc, -3px -3px 8px #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.neu-button-red:hover {
+    box-shadow: 6px 6px 14px #b8c4d6, -4px -4px 10px #ffffff;
+    transform: translateY(-1px);
+}
+
+.neu-button-navy {
+    background-color: #052855;
+    color: #ffffff;
+    box-shadow: 4px 4px 10px #c2cddc, -3px -3px 8px #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.neu-button-navy:hover {
+    box-shadow: 6px 6px 14px #b8c4d6, -4px -4px 10px #ffffff;
+    transform: translateY(-1px);
+}
+
+.neu-input {
+    background-color: #eef2f7;
+    box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+    border: 1px solid rgba(209, 217, 230, 0.6);
+    transition: all 0.2s ease-in-out;
+}
+
+.neu-input:focus {
+    box-shadow: inset 4px 4px 8px #c2cddc, inset -4px -4px 8px #ffffff;
+    outline: none;
+}
+
+.neu-card {
+    background-color: #eef2f7;
+    box-shadow: 8px 8px 18px #d1d9e6, -8px -8px 18px #ffffff;
+    border-radius: 1.5rem;
+    transition: all 0.25s ease-in-out;
+}
+
+.neu-card:hover {
+    box-shadow: 12px 12px 24px #c2cddc, -12px -12px 24px #ffffff;
+}
+
+.neu-card-sm {
+    background-color: #eef2f7;
+    box-shadow: 5px 5px 12px #d1d9e6, -5px -5px 12px #ffffff;
+    border-radius: 1rem;
+}
+
+.neu-pill {
+    background-color: #eef2f7;
+    box-shadow: 3px 3px 7px #d1d9e6, -3px -3px 7px #ffffff;
+}
+
+.neu-pill-pressed {
+    background-color: #eef2f7;
+    box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff;
+}
+
+.neu-avatar {
+    background-color: #eef2f7;
+    box-shadow: 4px 4px 10px #d1d9e6, -4px -4px 10px #ffffff;
+}
+
+.neu-avatar-inset {
+    background-color: #eef2f7;
+    box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+}
+
+.neu-dark-card {
+    background-color: #0f172a;
+    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.4), -4px -4px 14px rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(51, 65, 85, 0.4);
+}

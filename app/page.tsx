@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ALL_CLUBS,
-  UPCOMING_EVENTS,
-  CAMPUS_NOTICES
+  UPCOMING_EVENTS
 } from './data/clubsData';
 import {
   Club,
@@ -32,25 +32,22 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  const router = useRouter();
+
   const [clubs, setClubs] = useState<Club[]>(ALL_CLUBS);
   const [events, setEvents] = useState<ClubEvent[]>(UPCOMING_EVENTS);
-  const [notices, setNotices] = useState<ClubNotice[]>(CAMPUS_NOTICES);
 
-  // Selection & View States
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
 
-  // Filter & View States
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortBy, setSortBy] = useState<string>('featured');
   const [language, setLanguage] = useState<Language>('en');
 
-  // Committees Pagination / Expansion State
   const [showAllCommittees, setShowAllCommittees] = useState<boolean>(false);
   const INITIAL_COMMITTEES_COUNT = 3;
 
-  // Notification Toast
   const [toastMessage, setToastMessage] = useState<string>('');
 
   const showToast = (msg: string) => {
@@ -58,22 +55,33 @@ export default function App() {
     setTimeout(() => setToastMessage(''), 4000);
   };
 
-  // Categories extraction
   const categories = useMemo(() => {
     const cats = Array.from(new Set(clubs.map((c) => c.category)));
     return cats;
   }, [clubs]);
 
-  // Filtered & Sorted Clubs list
+  // Helper to detect the Free Student Union club regardless of exact id used in data
+  const isFSUClub = (club: Club | null) => {
+    if (!club) return false;
+    const id = club.id.toLowerCase();
+    const name = (club.name || '').toLowerCase();
+    const nepali = club.nepaliName || '';
+    return (
+      id === 'free-student-union' ||
+      id === 'fsu' ||
+      id.includes('fsu') ||
+      name.includes('free student') ||
+      nepali.includes('स्वतन्त्र विद्यार्थी युनियन')
+    );
+  };
+
   const filteredClubs = useMemo(() => {
     let result = [...clubs];
 
-    // Filter by Category
     if (selectedCategory !== 'All') {
       result = result.filter((c) => c.category === selectedCategory);
     }
 
-    // Filter by Search Query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -87,7 +95,6 @@ export default function App() {
       );
     }
 
-    // Sort
     if (sortBy === 'featured') {
       result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     } else if (sortBy === 'members-desc') {
@@ -101,13 +108,11 @@ export default function App() {
     return result;
   }, [clubs, selectedCategory, searchQuery, sortBy]);
 
-  // Displayed clubs based on Show More / Show Less limit
   const displayedClubs = useMemo(() => {
     if (showAllCommittees) return filteredClubs;
     return filteredClubs.slice(0, INITIAL_COMMITTEES_COUNT);
   }, [filteredClubs, showAllCommittees]);
 
-  // Grouped by Category for 'categorized' view mode
   const categorizedClubs = useMemo<Record<string, Club[]>>(() => {
     const groups: Record<string, Club[]> = {};
     const clubsToGroup = showAllCommittees ? filteredClubs : filteredClubs.slice(0, INITIAL_COMMITTEES_COUNT);
@@ -120,7 +125,6 @@ export default function App() {
     return groups;
   }, [filteredClubs, showAllCommittees]);
 
-  // Handlers
   const handleRegisterEvent = (eventId: string) => {
     setEvents((prev) =>
       prev.map((e) =>
@@ -136,7 +140,12 @@ export default function App() {
     showToast('Event Pass Registered Successfully! See details in calendar.');
   };
 
+  // If FSU, navigate to the dedicated /fsu route instead of opening the generic ClubPage
   const handleSelectClub = (club: Club | null) => {
+    if (isFSUClub(club)) {
+      router.push('/fsu');
+      return;
+    }
     setSelectedClub(club);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
@@ -192,7 +201,6 @@ export default function App() {
     handleNavigateToSection('events-calendar-section');
   };
 
-  // Smooth scroll to targeted section once the main dashboard finishes mounting
   useEffect(() => {
     if (!selectedClub && pendingTargetSection) {
       const target = pendingTargetSection;
@@ -201,13 +209,10 @@ export default function App() {
     }
   }, [selectedClub, pendingTargetSection]);
 
-  // UNIFIED APPLICATION ROOT WITH PERSISTENT ANIMATING HEADER
   return (
     <div className={`min-h-screen flex flex-col bg-[#eef2f7] text-[#1b1b1e] ${selectedClub ? 'font-quicksand' : 'font-inter'}`}>
-      {/* Scroll Progress Indicator Bar */}
       <ScrollProgressBar />
 
-      {/* Global Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-5 right-5 z-50 bg-[#000d27] text-white px-5 py-3 rounded-2xl shadow-2xl border border-amber-400 flex items-center gap-3 animate-in slide-in-from-bottom-5">
           <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
@@ -215,7 +220,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Persistent Global Navigation Bar with Dynamic Search Layout Morphing */}
       <Header
         clubs={clubs}
         onSelectClub={handleSelectClub}
@@ -240,7 +244,6 @@ export default function App() {
         activeClubName={selectedClub ? (language === 'np' && selectedClub.nepaliName ? selectedClub.nepaliName : selectedClub.name) : undefined}
       />
 
-      {/* Animated Page Transitions between Dashboard & Committee View */}
       <AnimatePresence mode="wait">
         {selectedClub ? (
           <motion.div
@@ -255,7 +258,6 @@ export default function App() {
               club={selectedClub}
               onBack={handleNavigateHome}
               events={events}
-              notices={notices}
               onRegisterEvent={handleRegisterEvent}
               onApplyJoin={(_clubId) => {
                 showToast('Membership application submitted to committee executive board!');
@@ -284,7 +286,6 @@ export default function App() {
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="flex-1 flex flex-col"
           >
-            {/* Hero Section Banner */}
             <HeroSection
               onExploreClick={() => {
                 handleNavigateToCommittees();
@@ -293,9 +294,7 @@ export default function App() {
               totalClubsCount={clubs.length}
             />
 
-            {/* Main Interactive Dashboard Canvas */}
             <main id="clubs-dashboard-section" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-12 scroll-mt-20">
-              {/* Filter Controls & Search Summary Bar */}
               <DashboardControls
                 categories={categories}
                 selectedCategory={selectedCategory}
@@ -314,7 +313,6 @@ export default function App() {
                 language={language}
               />
 
-              {/* 1) GRID CARD VIEW MODE */}
               {viewMode === 'grid' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                   {displayedClubs.map((club) => (
@@ -328,7 +326,6 @@ export default function App() {
                 </div>
               )}
 
-              {/* 2) LIST TABLE VIEW MODE */}
               {viewMode === 'list' && (
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
@@ -400,7 +397,6 @@ export default function App() {
                 </motion.div>
               )}
 
-              {/* 3) CATEGORIZED ACCORDION VIEW MODE */}
               {viewMode === 'categorized' && (
                 <div className="space-y-8">
                   {(Object.entries(categorizedClubs) as [string, Club[]][]).map(([categoryName, clubList]) => (
@@ -437,7 +433,6 @@ export default function App() {
                 </div>
               )}
 
-              {/* Global Show More / Show Less Committees Button */}
               {filteredClubs.length > INITIAL_COMMITTEES_COUNT && (
                 <div className="mt-8 flex justify-center">
                   <motion.button
@@ -462,7 +457,6 @@ export default function App() {
                 </div>
               )}
 
-              {/* Empty State */}
               {filteredClubs.length === 0 && (
                 <div className="neu-flat rounded-2xl p-12 text-center">
                   <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
@@ -483,7 +477,6 @@ export default function App() {
               )}
             </main>
 
-            {/* Events Calendar & Registration Section */}
             <EventsCalendarSection
               events={events}
               onRegisterEvent={handleRegisterEvent}
@@ -496,7 +489,6 @@ export default function App() {
               }}
             />
 
-            {/* Institutional Campus Footer */}
             <Footer
               language={language}
               onNavigateHome={handleNavigateHome}
@@ -512,9 +504,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Global Scroll To Top Button with Circular Progress */}
       <ScrollToTop />
     </div>
   );
 }
-

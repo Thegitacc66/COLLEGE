@@ -173,11 +173,26 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
         setTimeout(() => setToastMessage(null), 3500);
     };
 
+    // Category translation helper
+    const getCategoryLabel = (cat: string, lang?: Language | string) => {
+        if (lang !== 'np') return cat;
+        switch (cat) {
+            case 'All': return 'सबै';
+            case 'Workshop & Tech': return 'कार्यशाला र प्रविधि';
+            case 'Business & Pitch': return 'व्यापार र पिच';
+            case 'Sports & Athletics': return 'खेलकुद र एथलेटिक्स';
+            case 'Humanitarian & Health': return 'मानवता र स्वास्थ्य';
+            case 'Literature & Arts': return 'साहित्य र कला';
+            case 'Eco & Environment': return 'वातावरण र संरक्षण';
+            default: return cat;
+        }
+    };
+
     // Derive unique categories from active events
     const categories = useMemo(() => {
         const set = new Set<string>();
         events.forEach(e => {
-            if (e.category) set.add(e.category);
+            if (e.category) set.add(e.category.trim());
         });
         return ['All', ...Array.from(set)];
     }, [events]);
@@ -200,27 +215,31 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
     // Filter events by selected category and search query
     const filteredEvents = useMemo(() => {
         return sortedEvents.filter((e) => {
-            const matchesCategory = filterCategory === 'All' || e.category === filterCategory;
+            const matchesCategory =
+                filterCategory === 'All' ||
+                (e.category && e.category.trim().toLowerCase() === filterCategory.trim().toLowerCase());
+
             if (!matchesCategory) return false;
 
             if (!searchQuery.trim()) return true;
-            const q = searchQuery.toLowerCase();
+            const q = searchQuery.toLowerCase().trim();
             return (
-                e.title.toLowerCase().includes(q) ||
-                e.clubName.toLowerCase().includes(q) ||
-                e.venue.toLowerCase().includes(q) ||
-                e.category.toLowerCase().includes(q) ||
-                e.description.toLowerCase().includes(q)
+                (e.title && e.title.toLowerCase().includes(q)) ||
+                (e.clubName && e.clubName.toLowerCase().includes(q)) ||
+                (e.venue && e.venue.toLowerCase().includes(q)) ||
+                (e.category && e.category.toLowerCase().includes(q)) ||
+                (e.description && e.description.toLowerCase().includes(q))
             );
         });
     }, [sortedEvents, filterCategory, searchQuery]);
 
-    // Display subset based on showAllEvents toggle
-    const displayedEvents = showAllEvents
+    // Display subset: If filtering by specific category or searching, show all matching events. If 'All', paginate with INITIAL_EVENTS_COUNT
+    const isFiltering = filterCategory !== 'All' || searchQuery.trim().length > 0;
+    const displayedEvents = (showAllEvents || isFiltering)
         ? filteredEvents
         : filteredEvents.slice(0, INITIAL_EVENTS_COUNT);
 
-    const remainingCount = filteredEvents.length - INITIAL_EVENTS_COUNT;
+    const remainingCount = Math.max(0, filteredEvents.length - INITIAL_EVENTS_COUNT);
 
     // Handle Event Registration / RSVP
     const handleToggleRsvp = (eventItem: ClubEvent) => {
@@ -329,7 +348,7 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
     };
 
     return (
-        <section id="events-calendar-section" className="py-14 sm:py-18 bg-[#eef2f7] border-t border-slate-300/40 relative">
+        <section id="events-calendar-section" className="py-14 sm:py-18 bg-[#eef2f7] border-t border-slate-300/40 relative scroll-mt-20">
 
             {/* Mini Toast Notification */}
             <AnimatePresence>
@@ -434,14 +453,14 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                     </div>
 
                     {/* Category Filter Chips */}
-                    <div className="flex items-center gap-2 sm:gap-2.5 py-1 px-1 overflow-x-auto no-scrollbar scroll-smooth">
-                        <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider shrink-0 mr-1">
-                            {language === 'en' ? 'Category:' : 'श्रेणी:'}
+                    <div className="flex items-center gap-2 sm:gap-2.5 py-1.5 px-1 overflow-x-auto no-scrollbar scroll-smooth">
+                        <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+                            <span>{language === 'en' ? 'Category:' : 'श्रेणी:'}</span>
                         </span>
                         {categories.map((cat) => {
                             const count = cat === 'All'
                                 ? events.length
-                                : events.filter(e => e.category === cat).length;
+                                : events.filter(e => e.category && e.category.trim().toLowerCase() === cat.trim().toLowerCase()).length;
 
                             const isSelected = filterCategory === cat;
                             return (
@@ -449,16 +468,22 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                                     key={cat}
                                     type="button"
                                     onClick={() => {
-                                        setFilterCategory(cat);
-                                        setShowAllEvents(false);
+                                        // If clicking already selected category (other than 'All'), toggle back to 'All'
+                                        if (isSelected && cat !== 'All') {
+                                            setFilterCategory('All');
+                                        } else {
+                                            setFilterCategory(cat);
+                                        }
+                                        setShowAllEvents(true);
                                     }}
                                     className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 active:scale-95 ${isSelected
-                                            ? 'neu-button-primary text-white shadow-md'
+                                            ? 'neu-button-primary text-white shadow-sm scale-[1.02]'
                                             : 'bg-[#eef2f7] text-slate-700 hover:text-slate-900 shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] border border-white/80 hover:bg-white'
                                         }`}
+                                    title={`Filter by ${getCategoryLabel(cat, language)}`}
                                 >
-                                    <span>{cat}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/25 text-white' : 'bg-slate-300/60 text-slate-600'}`}>
+                                    <span>{getCategoryLabel(cat, language)}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${isSelected ? 'bg-white/30 text-white' : 'bg-slate-300/60 text-slate-700'}`}>
                                         {count}
                                     </span>
                                 </button>
@@ -467,164 +492,155 @@ export const EventsCalendarSection: React.FC<EventsCalendarSectionProps> = ({
                     </div>
                 </motion.div>
 
-                {/* Events Cards Grid with Staggered Scroll Entrance */}
-                {displayedEvents.length > 0 ? (
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-40px' }}
-                        variants={{
-                            hidden: { opacity: 0 },
-                            visible: {
-                                opacity: 1,
-                                transition: {
-                                    staggerChildren: 0.1,
-                                    delayChildren: 0.05
-                                }
-                            }
-                        }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-                    >
-                        {displayedEvents.map((evt, idx) => {
-                            const { month, day } = parseSafeDate(evt.date);
-
-                            return (
-                                <motion.div
-                                    key={evt.id}
-                                    variants={{
-                                        hidden: { opacity: 0, y: 35, scale: 0.97 },
-                                        visible: {
-                                            opacity: 1,
-                                            y: 0,
-                                            scale: 1,
-                                            transition: {
-                                                duration: 0.5,
-                                                ease: [0.22, 1, 0.36, 1],
-                                                delay: idx < 6 ? idx * 0.06 : 0
-                                            }
-                                        }
-                                    }}
-                                    whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                                    className="group bg-[#eef2f7] rounded-3xl p-5 sm:p-6 border border-white/80 shadow-[6px_6px_16px_#d1d9e6,-6px_-6px_16px_#ffffff] hover:shadow-[9px_9px_22px_#c8d2e2,-9px_-9px_22px_#ffffff] transition-all flex flex-col justify-between relative"
-                                >
-                                    <div>
-                                        {/* Top Image Banner */}
-                                        <div className="relative h-44 w-full rounded-2xl overflow-hidden bg-slate-200 mb-4 shadow-[inset_2px_2px_5px_#d1d9e6,inset_-2px_-2px_5px_#ffffff] shrink-0">
-                                            <img
-                                                src={evt.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80'}
-                                                alt={evt.title}
-                                                referrerPolicy="no-referrer"
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            />
-
-                                            {/* Vignette Overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent pointer-events-none" />
-
-                                            {/* Host Club Tag (Clickable to open committee page) */}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (onSelectClubById && evt.clubId) {
-                                                        onSelectClubById(evt.clubId);
-                                                    }
-                                                }}
-                                                className="absolute top-3 left-3 bg-white/95 text-slate-900 text-[11px] font-bold px-3 py-1 rounded-full border border-slate-200/80 shadow-md backdrop-blur-md hover:bg-blue-50 hover:text-[#0c72b8] transition-colors cursor-pointer flex items-center gap-1"
-                                                title="View host committee details"
-                                            >
-                                                <Building2 className="w-3 h-3 text-[#0c72b8]" />
-                                                <span className="max-w-[130px] truncate">{evt.clubName}</span>
-                                            </button>
-
-                                            {/* Date Badge */}
-                                            <div className="absolute top-3 right-3 bg-white text-slate-900 rounded-2xl px-3 py-1.5 text-center min-w-[50px] shadow-md border border-slate-100/90">
-                                                <span className="block text-[10px] font-extrabold text-[#0c72b8] tracking-widest uppercase leading-none">
-                                                    {month}
-                                                </span>
-                                                <span className="block text-base font-extrabold text-slate-900 leading-tight mt-0.5">
-                                                    {day}
-                                                </span>
-                                            </div>
-
-                                            {/* Category Label Bottom Tag */}
-                                            <div className="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-sm">
-                                                {evt.category}
-                                            </div>
-                                        </div>
-
-                                        {/* Title & Description */}
-                                        <div className="space-y-2">
-                                            <h3
-                                                onClick={() => setActiveEventModal(evt)}
-                                                className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-[#0c72b8] transition-colors leading-snug line-clamp-2 font-poppins cursor-pointer"
-                                            >
-                                                {evt.title}
-                                            </h3>
-
-                                            <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-normal">
-                                                {evt.description}
-                                            </p>
-                                        </div>
-
-                                        {/* Schedule & Location */}
-                                        <div className="space-y-2 text-xs text-slate-600 font-medium pt-3.5 my-3 border-t border-slate-300/40">
-                                            <div className="flex items-center gap-2 text-slate-700">
-                                                <Clock className="w-3.5 h-3.5 text-[#0c72b8] shrink-0" />
-                                                <span className="truncate">{evt.date} • {evt.time}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-slate-700">
-                                                <MapPin className="w-3.5 h-3.5 text-[#0c72b8] shrink-0" />
-                                                <span className="truncate">{evt.venue}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Card Action Button */}
-                                        <div className="pt-3 border-t border-slate-300/40">
-                                            <button
-                                                type="button"
-                                                onClick={() => setActiveEventModal(evt)}
-                                                className="w-full py-2.5 px-4 bg-[#eef2f7] hover:bg-white text-slate-800 hover:text-[#0c72b8] text-xs sm:text-sm font-bold rounded-xl transition-all shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[5px_5px_12px_#c8d2e2,-5px_-5px_12px_#ffffff] border border-white/80 cursor-pointer flex items-center justify-center gap-2 group/btn active:scale-[0.98]"
-                                            >
-                                                <Ticket className="w-4 h-4 text-[#0c72b8] group-hover/btn:scale-110 transition-transform" />
-                                                <span>View Event Details</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </motion.div>
-                ) : (
-                    /* Empty Search & Filter State */
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="bg-[#eef2f7] rounded-3xl p-10 sm:p-14 text-center border border-white/80 shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] max-w-lg mx-auto my-6"
-                    >
-                        <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                        <h3 className="text-base font-bold text-slate-900 font-poppins">
-                            {language === 'en' ? 'No events match your criteria' : 'कुनै कार्यक्रमहरू फेला परेनन्'}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                            {language === 'en'
-                                ? 'Try adjusting your search keyword or switching the category filter back to "All".'
-                                : 'कृपया खोज शब्द परिवर्तन गर्नुहोस् वा सबै कार्यक्रमहरू हेर्नुहोस्।'}
-                        </p>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setFilterCategory('All');
-                                setSearchQuery('');
-                            }}
-                            className="mt-5 px-5 py-2.5 neu-button-primary text-white text-xs font-bold rounded-xl cursor-pointer active:scale-95 transition-transform"
+                {/* Events Cards Grid with AnimatePresence for seamless filtering */}
+                <AnimatePresence mode="popLayout">
+                    {displayedEvents.length > 0 ? (
+                        <motion.div
+                            key={`events-grid-${filterCategory}-${sortAscending ? 'asc' : 'desc'}-${searchQuery ? 'search' : 'all'}`}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3 }}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
                         >
-                            {language === 'en' ? 'Reset All Filters' : 'फिल्टरहरू रिसेट गर्नुहोस्'}
-                        </button>
-                    </motion.div>
-                )}
+                            {displayedEvents.map((evt, idx) => {
+                                const { month, day } = parseSafeDate(evt.date);
 
-                {/* Show More / Show Less Button */}
-                {filteredEvents.length > INITIAL_EVENTS_COUNT && (
+                                return (
+                                    <motion.div
+                                        key={evt.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{
+                                            duration: 0.35,
+                                            delay: Math.min(idx * 0.05, 0.25),
+                                            ease: [0.22, 1, 0.36, 1]
+                                        }}
+                                        whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                                        className="group bg-[#eef2f7] rounded-3xl p-5 sm:p-6 border border-white/80 shadow-[6px_6px_16px_#d1d9e6,-6px_-6px_16px_#ffffff] hover:shadow-[9px_9px_22px_#c8d2e2,-9px_-9px_22px_#ffffff] transition-all flex flex-col justify-between relative"
+                                    >
+                                        <div>
+                                            {/* Top Image Banner */}
+                                            <div className="relative h-44 w-full rounded-2xl overflow-hidden bg-slate-200 mb-4 shadow-[inset_2px_2px_5px_#d1d9e6,inset_-2px_-2px_5px_#ffffff] shrink-0">
+                                                <img
+                                                    src={evt.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80'}
+                                                    alt={evt.title}
+                                                    referrerPolicy="no-referrer"
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                />
+
+                                                {/* Vignette Overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent pointer-events-none" />
+
+                                                {/* Host Club Tag (Clickable to open committee page) */}
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (onSelectClubById && evt.clubId) {
+                                                            onSelectClubById(evt.clubId);
+                                                        }
+                                                    }}
+                                                    className="absolute top-3 left-3 bg-white/95 text-slate-900 text-[11px] font-bold px-3 py-1 rounded-full border border-slate-200/80 shadow-md backdrop-blur-md hover:bg-blue-50 hover:text-[#0c72b8] transition-colors cursor-pointer flex items-center gap-1"
+                                                    title="View host committee details"
+                                                >
+                                                    <Building2 className="w-3 h-3 text-[#0c72b8]" />
+                                                    <span className="max-w-[130px] truncate">{evt.clubName}</span>
+                                                </button>
+
+                                                {/* Date Badge */}
+                                                <div className="absolute top-3 right-3 bg-white text-slate-900 rounded-2xl px-3 py-1.5 text-center min-w-[50px] shadow-md border border-slate-100/90">
+                                                    <span className="block text-[10px] font-extrabold text-[#0c72b8] tracking-widest uppercase leading-none">
+                                                        {month}
+                                                    </span>
+                                                    <span className="block text-base font-extrabold text-slate-900 leading-tight mt-0.5">
+                                                        {day}
+                                                    </span>
+                                                </div>
+
+                                                {/* Category Label Bottom Tag */}
+                                                <div className="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold px-3 py-1 rounded-full shadow-sm">
+                                                    {getCategoryLabel(evt.category, language)}
+                                                </div>
+                                            </div>
+
+                                            {/* Title & Description */}
+                                            <div className="space-y-2">
+                                                <h3
+                                                    onClick={() => setActiveEventModal(evt)}
+                                                    className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-[#0c72b8] transition-colors leading-snug line-clamp-2 font-poppins cursor-pointer"
+                                                >
+                                                    {evt.title}
+                                                </h3>
+
+                                                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-normal">
+                                                    {evt.description}
+                                                </p>
+                                            </div>
+
+                                            {/* Schedule & Location */}
+                                            <div className="space-y-2 text-xs text-slate-600 font-medium pt-3.5 my-3 border-t border-slate-300/40">
+                                                <div className="flex items-center gap-2 text-slate-700">
+                                                    <Clock className="w-3.5 h-3.5 text-[#0c72b8] shrink-0" />
+                                                    <span className="truncate">{evt.date} • {evt.time}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-slate-700">
+                                                    <MapPin className="w-3.5 h-3.5 text-[#0c72b8] shrink-0" />
+                                                    <span className="truncate">{evt.venue}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Card Action Button */}
+                                            <div className="pt-3 border-t border-slate-300/40">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setActiveEventModal(evt)}
+                                                    className="w-full py-2.5 px-4 bg-[#eef2f7] hover:bg-white text-slate-800 hover:text-[#0c72b8] text-xs sm:text-sm font-bold rounded-xl transition-all shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[5px_5px_12px_#c8d2e2,-5px_-5px_12px_#ffffff] border border-white/80 cursor-pointer flex items-center justify-center gap-2 group/btn active:scale-[0.98]"
+                                                >
+                                                    <Ticket className="w-4 h-4 text-[#0c72b8] group-hover/btn:scale-110 transition-transform" />
+                                                    <span>{language === 'en' ? 'View Event Details' : 'कार्यक्रम विवरण हेर्नुहोस्'}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </motion.div>
+                    ) : (
+                        /* Empty Search & Filter State */
+                        <motion.div
+                            key="events-empty-state"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-[#eef2f7] rounded-3xl p-10 sm:p-14 text-center border border-white/80 shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] max-w-lg mx-auto my-6"
+                        >
+                            <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                            <h3 className="text-base font-bold text-slate-900 font-poppins">
+                                {language === 'en' ? 'No events match your criteria' : 'कुनै कार्यक्रमहरू फेला परेनन्'}
+                            </h3>
+                            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                                {language === 'en'
+                                    ? 'Try adjusting your search keyword or switching the category filter back to "All".'
+                                    : 'कृपया खोज शब्द परिवर्तन गर्नुहोस् वा सबै कार्यक्रमहरू हेर्नुहोस्।'}
+                            </p>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFilterCategory('All');
+                                    setSearchQuery('');
+                                    setShowAllEvents(false);
+                                }}
+                                className="mt-5 px-5 py-2.5 neu-button-primary text-white text-xs font-bold rounded-xl cursor-pointer active:scale-95 transition-transform"
+                            >
+                                {language === 'en' ? 'Reset All Filters' : 'फिल्टरहरू रिसेट गर्नुहोस्'}
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Show More / Show Less Button (Only shown when browsing All and count exceeds initial count) */}
+                {!isFiltering && filteredEvents.length > INITIAL_EVENTS_COUNT && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}

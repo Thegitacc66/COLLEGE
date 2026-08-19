@@ -54,7 +54,8 @@ import {
     ClubNotice,
     Language,
     AchievementItem,
-    LeadershipMember
+    LeadershipMember,
+    UPCOMING_EVENTS
 } from '../app/data/clubsData';
 import { SuggestionMessageBox } from './SuggestionMessageBox';
 
@@ -67,303 +68,6 @@ export interface AchievementCardData {
     image?: string;
     badge?: string;
 }
-
-const getClubUpcomingEvents = (club: Club, passedEvents: ClubEvent[] = []): ClubEvent[] => {
-    const existing = passedEvents.filter((e) => e.clubId === club.id);
-
-    const cat = (club.category || '').toLowerCase();
-    const name = club.name;
-
-    let committeeDefaults: ClubEvent[] = [];
-
-    if (cat.includes('tech') || cat.includes('computer') || cat.includes('it')) {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Full-Stack React & AI Agent Hackathon 2026',
-                date: '2026-08-25',
-                time: '09:00 AM - 05:00 PM',
-                venue: 'IT Lab 204 & Main Auditorium',
-                category: 'Workshop & Hackathon',
-                description: 'Build innovative web applications integrated with modern AI models. Prize pool worth NPR 50,000 with certificates and mentor feedback for all participants!',
-                capacity: 100,
-                registeredCount: 68,
-                image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Cybersecurity & Ethical Hacking Hands-On Bootcamp',
-                date: '2026-09-08',
-                time: '01:00 PM - 04:30 PM',
-                venue: 'Computer Science Center, Lab B',
-                category: 'Technical Workshop',
-                description: 'Explore network penetration testing, web vulnerability discovery, and modern cyber defense strategies guided by industry security analysts.',
-                capacity: 80,
-                registeredCount: 54,
-                image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-3`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Open Source Contribution & Git Mastery Session',
-                date: '2026-09-20',
-                time: '11:00 AM - 02:00 PM',
-                venue: 'Digital Media Room 102',
-                category: 'Peer Learning',
-                description: 'Learn collaborative Git workflows, submitting pull requests, and building portfolio-ready open source projects on GitHub.',
-                capacity: 60,
-                registeredCount: 39,
-                image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    } else if (cat.includes('business') || cat.includes('management') || cat.includes('bba')) {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Startup Pitch Deck & Youth Venture Summit 2026',
-                date: '2026-08-28',
-                time: '11:00 AM - 03:00 PM',
-                venue: 'Management Seminar Hall',
-                category: 'Business & Pitch',
-                description: 'Present your innovative business plan to regional venture leaders and banking executives. Winning pitches receive mentorship and incubation support.',
-                capacity: 80,
-                registeredCount: 42,
-                image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'NEPSE Stock Trading & Financial Portfolio Masterclass',
-                date: '2026-09-05',
-                time: '01:30 PM - 04:00 PM',
-                venue: 'BBA Interactive Hall',
-                category: 'Financial Seminar',
-                description: 'Deep dive into fundamental company analysis, technical charting, and risk mitigation strategies in the Nepalese capital market.',
-                capacity: 70,
-                registeredCount: 51,
-                image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-3`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Corporate Leadership & Case Study Challenge',
-                date: '2026-09-18',
-                time: '10:00 AM - 02:00 PM',
-                venue: 'Conference Room A',
-                category: 'Case Competition',
-                description: 'Solve real-world brand expansion dilemmas under strict time limits in teams of three. Judged by seasoned corporate consultants.',
-                capacity: 60,
-                registeredCount: 38,
-                image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    } else if (cat.includes('sport') || cat.includes('athletic')) {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Inter-Faculty Futsal & Cricket Championship 2026',
-                date: '2026-09-03',
-                time: '08:00 AM - 04:00 PM',
-                venue: 'Campus Sports Arena & Futsal Ground',
-                category: 'Tournament & Sports',
-                description: 'Multi-day tournament bringing together student teams from all academic faculties. Medals, trophies, and certificates for top performers!',
-                capacity: 250,
-                registeredCount: 160,
-                image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Annual Badminton & Table Tennis Open Cup',
-                date: '2026-09-14',
-                time: '10:00 AM - 03:30 PM',
-                venue: 'Indoor Sports Complex',
-                category: 'Singles & Doubles',
-                description: 'Exciting racket sport matchups across Men and Women singles and mixed doubles brackets.',
-                capacity: 80,
-                registeredCount: 45,
-                image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    } else if (cat.includes('literature') || cat.includes('culture') || cat.includes('art')) {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Inter-College Poetry, Gazal & Short Story Recitation',
-                date: '2026-09-15',
-                time: '01:00 PM - 04:30 PM',
-                venue: 'Bhanu Memorial Hall',
-                category: 'Literature & Poetry',
-                description: 'Showcase your creative writing, poetic recitation, and gazal compositions. Renowned litterateurs and alumni poets on the judge panel.',
-                capacity: 150,
-                registeredCount: 78,
-                image: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Bhanu Jayanti Cultural Drama & Folk Music Festival',
-                date: '2026-09-24',
-                time: '11:00 AM - 04:00 PM',
-                venue: 'Main Campus Amphitheater',
-                category: 'Cultural Exhibition',
-                description: 'Celebration of Nepalese traditional folklore, theatrical drama, and instrumental folk performances.',
-                capacity: 400,
-                registeredCount: 220,
-                image: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    } else if (cat.includes('humanitarian') || cat.includes('red cross') || cat.includes('service') || cat.includes('health') || cat.includes('disaster')) {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Mega Blood Donation & Free Health Screening Camp',
-                date: '2026-09-10',
-                time: '09:30 AM - 03:30 PM',
-                venue: 'Student Recreation Gazebo',
-                category: 'Health & Humanitarian',
-                description: 'Join hands to donate blood and save lives in Tanahun district. Free blood pressure, blood glucose, and basic health consultation by medical professionals.',
-                capacity: 300,
-                registeredCount: 145,
-                image: 'https://images.unsplash.com/photo-1615461066841-6116e61058f4?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'First Aid Certification & Disaster Preparedness Drill',
-                date: '2026-09-22',
-                time: '10:00 AM - 02:00 PM',
-                venue: 'Red Cross Resource Room & Courtyard',
-                category: 'Emergency Training',
-                description: 'Practical training on CPR, emergency bandage techniques, stretcher transport, and rapid earthquake evacuation response.',
-                capacity: 90,
-                registeredCount: 65,
-                image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    } else if (cat.includes('eco') || cat.includes('environment')) {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Green Campus Tree Plantation & Botanical Flora Tagging',
-                date: '2026-09-06',
-                time: '07:30 AM - 11:30 AM',
-                venue: 'Campus Eco Park & Botanical Garden',
-                category: 'Environmental Action',
-                description: 'Planting 200+ indigenous saplings across campus grounds and creating digital QR plant tags for botanical awareness.',
-                capacity: 120,
-                registeredCount: 82,
-                image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Zero-Waste & Plastic-Free Campus Campaign',
-                date: '2026-09-19',
-                time: '12:00 PM - 03:00 PM',
-                venue: 'Student Cafeteria & Courtyard',
-                category: 'Awareness Drive',
-                description: 'Interactive workshops on waste segregation, composting organic cafeteria waste, and distributing cloth bags.',
-                capacity: 100,
-                registeredCount: 60,
-                image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    } else if (cat.includes('women') || cat.includes('empowerment')) {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Women in Leadership & Entrepreneurship Summit 2026',
-                date: '2026-09-12',
-                time: '10:30 AM - 03:30 PM',
-                venue: 'Bhanu Main Auditorium',
-                category: 'Leadership Summit',
-                description: 'Panel discussions with prominent female leaders, financial literacy workshops, and mentorship circles for female students.',
-                capacity: 180,
-                registeredCount: 115,
-                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Self-Defense, Mental Wellness & Confidence Workshop',
-                date: '2026-09-26',
-                time: '01:00 PM - 04:00 PM',
-                venue: 'Student Activities Complex',
-                category: 'Practical Training',
-                description: 'Hands-on self-defense training with martial arts coaches along with mental wellness coping techniques.',
-                capacity: 90,
-                registeredCount: 62,
-                image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    } else {
-        committeeDefaults = [
-            {
-                id: `evt-${club.id}-1`,
-                clubId: club.id,
-                clubName: club.name,
-                title: `${name} Annual Assembly & Flagship Workshop 2026`,
-                date: '2026-09-04',
-                time: '10:00 AM - 03:00 PM',
-                venue: 'Main Auditorium & Seminar Hall',
-                category: 'Flagship Event',
-                description: `Join us for the premier annual gathering of ${name}. Featuring keynote talks from distinguished alumni, practical project showcases, and student networking.`,
-                capacity: 150,
-                registeredCount: 85,
-                image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&auto=format&fit=crop&q=80'
-            },
-            {
-                id: `evt-${club.id}-2`,
-                clubId: club.id,
-                clubName: club.name,
-                title: 'Skill Development & Career Mentorship Bootcamp',
-                date: '2026-09-16',
-                time: '01:00 PM - 04:30 PM',
-                venue: 'Interactive Room 302',
-                category: 'Mentorship & Growth',
-                description: 'Hands-on practical training designed to expand your core competencies, public speaking, and project leadership.',
-                capacity: 80,
-                registeredCount: 48,
-                image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
-            }
-        ];
-    }
-
-    // Combine passed events with defaults without duplicate titles
-    const combined = [...existing];
-    for (const def of committeeDefaults) {
-        if (!combined.some((c) => c.title.toLowerCase().trim() === def.title.toLowerCase().trim())) {
-            combined.push(def);
-        }
-    }
-
-    return combined;
-};
 
 const getContextualAchievementImage = (title: string, idx: number, category: string = ''): string => {
     const t = (title + ' ' + category).toLowerCase();
@@ -462,11 +166,13 @@ export const ClubPage: React.FC<ClubPageProps> = ({
     });
 
     const [clubEventsList, setClubEventsList] = useState<ClubEvent[]>(() => {
-        return getClubUpcomingEvents(club, events);
+        const sourceEvents = events && events.length > 0 ? events : UPCOMING_EVENTS;
+        return sourceEvents.filter((e) => e.clubId === club.id);
     });
 
     useEffect(() => {
-        setClubEventsList(getClubUpcomingEvents(club, events));
+        const sourceEvents = events && events.length > 0 ? events : UPCOMING_EVENTS;
+        setClubEventsList(sourceEvents.filter((e) => e.clubId === club.id));
     }, [club, events]);
 
     const handleEventRegistration = (eventId: string, e?: React.MouseEvent) => {
@@ -830,6 +536,30 @@ export const ClubPage: React.FC<ClubPageProps> = ({
     const [memberRoleCategory, setMemberRoleCategory] = useState<'all' | 'board' | 'advisors' | 'members'>('all');
     const [memberSortBy, setMemberSortBy] = useState<'hierarchy' | 'name-asc' | 'name-desc' | 'role'>('hierarchy');
     const [showAllMembers, setShowAllMembers] = useState(false);
+    const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+    const sortDropdownRef = React.useRef<HTMLDivElement>(null);
+
+    // Close sort dropdown when clicking outside or pressing Escape
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
+                setIsSortDropdownOpen(false);
+            }
+        };
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsSortDropdownOpen(false);
+            }
+        };
+        if (isSortDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isSortDropdownOpen]);
 
     // Helper to categorize members
     const getMemberCategory = (member: LeadershipMember): 'board' | 'advisors' | 'members' => {
@@ -1056,8 +786,8 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                                         }}
                                         onClick={() => scrollToSection(tab.id)}
                                         className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 border ${isActive
-                                                ? 'bg-[#0c72b8] text-white shadow-[0_4px_12px_rgba(12,114,184,0.35)] border-[#0c72b8]'
-                                                : 'bg-[#eef2f7] text-slate-700 hover:text-slate-900 shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[4px_4px_10px_#c8d2e2,-4px_-4px_10px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,inset_-2px_-2px_5px_#ffffff] border-white/80'
+                                            ? 'bg-[#0c72b8] text-white shadow-[0_4px_12px_rgba(12,114,184,0.35)] border-[#0c72b8]'
+                                            : 'bg-[#eef2f7] text-slate-700 hover:text-slate-900 shadow-[3px_3px_7px_#d1d9e6,-3px_-3px_7px_#ffffff] hover:shadow-[4px_4px_10px_#c8d2e2,-4px_-4px_10px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,inset_-2px_-2px_5px_#ffffff] border-white/80'
                                             }`}
                                     >
                                         {tab.icon}
@@ -1488,7 +1218,7 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                     {clubEventsList.length === 0 ? (
                         <div className="bg-[#eef2f7] rounded-3xl p-12 text-center shadow-[inset_3px_3px_7px_#d1d9e6,inset_-3px_-3px_7px_#ffffff] border border-slate-200/50">
                             <Calendar className="w-10 h-10 text-slate-400 mx-auto mb-2" />
-                            <p className="text-sm text-slate-500 font-medium">No upcoming events scheduled right now for this committee.</p>
+                            <p className="text-sm text-slate-500 font-medium">No upcoming events at the moment.</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
@@ -1682,22 +1412,99 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                                 </div>
 
                                 {/* Sort Dropdown Selector */}
-                                <div className="flex items-center gap-2 shrink-0">
-                                    <div className="flex items-center gap-1.5 px-3 py-2 bg-white/80 rounded-xl border border-slate-200 shadow-sm text-xs font-semibold text-slate-700">
-                                        <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                                <div className="relative shrink-0" ref={sortDropdownRef}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                                        aria-expanded={isSortDropdownOpen}
+                                        aria-haspopup="listbox"
+                                        className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer select-none active:scale-[0.98] ${isSortDropdownOpen
+                                            ? 'bg-white text-[#0c72b8] border-[#0c72b8]/30 shadow-[3px_3px_8px_#c8d2e2,-3px_-3px_8px_#ffffff]'
+                                            : 'bg-[#eef2f7] hover:bg-white text-slate-700 hover:text-slate-900 border-white/80 shadow-[2px_2px_6px_#d1d9e6,-2px_-2px_6px_#ffffff] hover:shadow-[3px_3px_8px_#c8d2e2,-3px_-3px_8px_#ffffff]'
+                                            }`}
+                                    >
+                                        <ArrowUpDown className="w-3.5 h-3.5 text-[#0c72b8] shrink-0" />
                                         <span className="hidden sm:inline text-slate-500 font-normal">Sort:</span>
-                                        <select
-                                            value={memberSortBy}
-                                            onChange={(e) => setMemberSortBy(e.target.value as any)}
-                                            aria-label="Sort committee members"
-                                            className="bg-transparent font-bold text-slate-800 outline-none cursor-pointer text-xs"
-                                        >
-                                            <option value="hierarchy">Hierarchy / Order</option>
-                                            <option value="name-asc">Name (A → Z)</option>
-                                            <option value="name-desc">Name (Z → A)</option>
-                                            <option value="role">Role Title</option>
-                                        </select>
-                                    </div>
+                                        <span className="text-slate-800 font-bold whitespace-nowrap">
+                                            {memberSortBy === 'hierarchy' && 'Hierarchy / Order'}
+                                            {memberSortBy === 'name-asc' && 'Name (A → Z)'}
+                                            {memberSortBy === 'name-desc' && 'Name (Z → A)'}
+                                            {memberSortBy === 'role' && 'Role Title'}
+                                        </span>
+                                        <ChevronDown
+                                            className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 shrink-0 ${isSortDropdownOpen ? 'rotate-180 text-[#0c72b8]' : ''
+                                                }`}
+                                        />
+                                    </button>
+
+                                    {/* Custom Dropdown Popover Menu */}
+                                    <AnimatePresence>
+                                        {isSortDropdownOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 4, scale: 0.96 }}
+                                                transition={{ duration: 0.16, ease: 'easeOut' }}
+                                                role="listbox"
+                                                className="absolute right-0 top-full mt-2 w-56 bg-[#eef2f7] rounded-2xl p-1.5 border border-white/90 shadow-[6px_6px_18px_#c8d2e2,-6px_-6px_18px_#ffffff] z-40 space-y-1"
+                                            >
+                                                <div className="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-200/60 flex items-center justify-between">
+                                                    <span>Sort Members By</span>
+                                                    <SlidersHorizontal className="w-3 h-3 text-slate-400" />
+                                                </div>
+
+                                                {[
+                                                    { id: 'hierarchy' as const, label: 'Hierarchy / Order', desc: 'Rank & executive precedence', icon: Crown },
+                                                    { id: 'name-asc' as const, label: 'Name (A → Z)', desc: 'Alphabetical ascending', icon: ArrowUpDown },
+                                                    { id: 'name-desc' as const, label: 'Name (Z → A)', desc: 'Alphabetical descending', icon: ArrowUpDown },
+                                                    { id: 'role' as const, label: 'Role Title', desc: 'Alphabetical by designation', icon: Briefcase }
+                                                ].map((opt) => {
+                                                    const isSelected = memberSortBy === opt.id;
+                                                    const IconComp = opt.icon;
+                                                    return (
+                                                        <button
+                                                            key={opt.id}
+                                                            type="button"
+                                                            role="option"
+                                                            aria-selected={isSelected}
+                                                            onClick={() => {
+                                                                setMemberSortBy(opt.id);
+                                                                setIsSortDropdownOpen(false);
+                                                            }}
+                                                            className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-all flex items-center justify-between group cursor-pointer ${isSelected
+                                                                ? 'bg-white text-[#0c72b8] font-bold shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff] border border-white'
+                                                                : 'text-slate-700 hover:bg-white/80 hover:text-slate-900 font-medium'
+                                                                }`}
+                                                        >
+                                                            <div className="flex items-center gap-2.5 min-w-0">
+                                                                <div
+                                                                    className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isSelected
+                                                                        ? 'bg-blue-50 text-[#0c72b8]'
+                                                                        : 'bg-slate-200/60 text-slate-500 group-hover:bg-blue-50 group-hover:text-[#0c72b8]'
+                                                                        }`}
+                                                                >
+                                                                    <IconComp className="w-3.5 h-3.5" />
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <div className={`truncate leading-tight ${isSelected ? 'font-bold' : 'font-semibold'}`}>
+                                                                        {opt.label}
+                                                                    </div>
+                                                                    <div className="text-[10px] text-slate-400 truncate mt-0.5 font-normal">
+                                                                        {opt.desc}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {isSelected && (
+                                                                <div className="w-4 h-4 rounded-full bg-[#0c72b8] text-white flex items-center justify-center shrink-0 shadow-sm ml-2">
+                                                                    <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                                                </div>
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             </div>
 
@@ -1712,8 +1519,8 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                                         setShowAllMembers(false);
                                     }}
                                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'all'
-                                            ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
-                                            : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                        ? 'bg-[#0c72b8] text-white shadow-sm border border-[#09568c]/20'
+                                        : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
                                         }`}
                                 >
                                     <span>All</span>
@@ -1730,8 +1537,8 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                                             setShowAllMembers(false);
                                         }}
                                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'board'
-                                                ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
-                                                : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                            ? 'bg-[#0c72b8] text-white shadow-sm border border-[#09568c]/20'
+                                            : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
                                             }`}
                                     >
                                         <Crown className="w-3 h-3" />
@@ -1750,8 +1557,8 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                                             setShowAllMembers(false);
                                         }}
                                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'advisors'
-                                                ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
-                                                : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                            ? 'bg-[#0c72b8] text-white shadow-sm border border-[#09568c]/20'
+                                            : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
                                             }`}
                                     >
                                         <GraduationCap className="w-3.5 h-3.5" />
@@ -1770,8 +1577,8 @@ export const ClubPage: React.FC<ClubPageProps> = ({
                                             setShowAllMembers(false);
                                         }}
                                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${memberRoleCategory === 'members'
-                                                ? 'bg-[#0c72b8] text-white shadow-[2px_2px_5px_#09568c,-2px_-2px_5px_#108fe4]'
-                                                : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
+                                            ? 'bg-[#0c72b8] text-white shadow-sm border border-[#09568c]/20'
+                                            : 'bg-[#eef2f7] text-slate-600 hover:text-slate-900 shadow-[3px_3px_6px_#d1d9e6,-3px_-3px_6px_#ffffff]'
                                             }`}
                                     >
                                         <UserCheck className="w-3 h-3" />
@@ -2216,17 +2023,20 @@ export const ClubPage: React.FC<ClubPageProps> = ({
 
                                     <div>
                                         <label className="block text-xs font-bold text-slate-700 mb-1">Faculty / Program</label>
-                                        <select
-                                            value={joinFormData.faculty}
-                                            onChange={(e) => setJoinFormData({ ...joinFormData, faculty: e.target.value })}
-                                            className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0c72b8]"
-                                        >
-                                            <option>BIM / CSIT</option>
-                                            <option>BBA / Management</option>
-                                            <option>B.Ed / Education</option>
-                                            <option>BA / Humanities</option>
-                                            <option>MBS / Master's</option>
-                                        </select>
+                                        <div className="relative">
+                                            <select
+                                                value={joinFormData.faculty}
+                                                onChange={(e) => setJoinFormData({ ...joinFormData, faculty: e.target.value })}
+                                                className="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-8 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0c72b8] appearance-none cursor-pointer font-medium"
+                                            >
+                                                <option>BIM / CSIT</option>
+                                                <option>BBA / Management</option>
+                                                <option>B.Ed / Education</option>
+                                                <option>BA / Humanities</option>
+                                                <option>MBS / Master's</option>
+                                            </select>
+                                            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                        </div>
                                     </div>
                                 </div>
 

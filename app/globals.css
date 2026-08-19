@@ -110,12 +110,13 @@
 .neu-button-primary {
   background-color: #0c72b8;
   color: #ffffff;
-  box-shadow: 4px 4px 12px rgba(12, 114, 184, 0.35), -4px -4px 12px #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease-in-out;
 }
 
 .neu-button-primary:hover {
-  box-shadow: 6px 6px 16px rgba(12, 114, 184, 0.45), -6px -6px 16px #ffffff;
+  background-color: #0a63a1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
 }
 
 .neu-input {
