@@ -1179,5 +1179,5 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
         capacity: 90,
         registeredCount: 65,
         image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80'
-    }
+    },
 ];
