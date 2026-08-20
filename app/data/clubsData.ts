@@ -1092,35 +1092,6 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
         image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
     },
 
-    // Literature & Creative Forum (aadikavi-nepali-creative-form)
-    {
-        id: 'evt-lit-1',
-        clubId: 'aadikavi-nepali-creative-form',
-        clubName: 'Aadikavi Nepali Literature & Creative Forum',
-        title: 'Inter-College Poetry, Gazal & Short Story Recitation',
-        date: '2026-09-15',
-        time: '01:00 PM - 04:30 PM',
-        venue: 'Bhanu Memorial Hall',
-        category: 'Literature & Poetry',
-        description: 'Showcase your creative writing, poetic recitation, and gazal compositions. Renowned litterateurs and alumni poets on the judge panel.',
-        capacity: 150,
-        registeredCount: 78,
-        image: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&auto=format&fit=crop&q=80'
-    },
-    {
-        id: 'evt-lit-2',
-        clubId: 'aadikavi-nepali-creative-form',
-        clubName: 'Aadikavi Nepali Literature & Creative Forum',
-        title: 'Bhanu Jayanti Cultural Drama & Creative Writing Fest',
-        date: '2026-09-24',
-        time: '11:00 AM - 04:00 PM',
-        venue: 'Main Campus Amphitheater',
-        category: 'Cultural Exhibition',
-        description: 'Celebration of Nepalese traditional folklore, theatrical drama, and instrumental folk performances.',
-        capacity: 400,
-        registeredCount: 220,
-        image: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=800&auto=format&fit=crop&q=80'
-    },
 
     // Health, Wellness & Commerce (bbs-circle)
     {
@@ -1153,34 +1124,7 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
     },
 
     // Youth Social Service (student-management-circle)
-    {
-        id: 'evt-smc-1',
-        clubId: 'student-management-circle',
-        clubName: 'Youth Social Service & Leadership Circle',
-        title: 'Aadikavi Model United Nations (AMUN 2026)',
-        date: '2026-09-09',
-        time: '09:00 AM - 05:00 PM',
-        venue: 'Main Campus Auditorium',
-        category: 'Debate & Leadership',
-        description: 'Engage in diplomatic negotiation, crisis resolution, and parliamentary oration on pressing global challenges.',
-        capacity: 120,
-        registeredCount: 74,
-        image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&auto=format&fit=crop&q=80'
-    },
-    {
-        id: 'evt-smc-2',
-        clubId: 'student-management-circle',
-        clubName: 'Youth Social Service & Leadership Circle',
-        title: 'Master of Ceremonies (MCing) & Public Oration Bootcamp',
-        date: '2026-09-21',
-        time: '01:00 PM - 04:30 PM',
-        venue: 'Seminar Hall B',
-        category: 'Skill Workshop',
-        description: 'Comprehensive public speaking coaching covering voice modulation, stage presence, and hosting high-profile events.',
-        capacity: 65,
-        registeredCount: 40,
-        image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&auto=format&fit=crop&q=80'
-    },
+
 
     // Red Cross Circle (nepal-youth-red-cross)
     {
@@ -1210,110 +1154,8 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
         capacity: 90,
         registeredCount: 65,
         image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80'
-    },
+    }
 
     // Humanities
-{
-    id: 'evt-human-1',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Educational Seminar',
-    date: '2026-09-22',
-    time: '10:00 AM - 02:00 PM',
-    venue: 'Seminar Hall',
-    category: 'Education',
-    description: 'An interactive seminar focused on knowledge sharing, critical thinking, and exploring important academic and social topics.',
-    image: ''
-},
 
-{
-    id: 'evt-human-2',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Speech & Presentation Competition',
-    date: '2026-10-05',
-    time: '11:00 AM - 03:00 PM',
-    venue: 'College Auditorium',
-    category: 'Competition',
-    description: 'A platform for students to showcase their public speaking, presentation, confidence, and communication skills.',
-    image: ''
-},
-
-{
-    id: 'evt-human-3',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Essay & Creative Writing Competition',
-    date: '2026-10-18',
-    time: '10:00 AM - 01:00 PM',
-    venue: 'College Library',
-    category: 'Creative Writing',
-    description: 'A creative writing competition where students express their ideas, imagination, and perspectives through essays and original writing.',
-    image: ''
-},
-
-{
-    id: 'evt-human-4',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Cultural Program',
-    date: '2026-11-02',
-    time: '12:00 PM - 04:00 PM',
-    venue: 'College Courtyard',
-    category: 'Culture',
-    description: 'A celebration of Nepalese culture featuring music, dance, traditional performances, art, and cultural presentations by students.',
-    image: ''
-},
-
-{
-    id: 'evt-human-5',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Inter-School & Inter-College Competition',
-    date: '2026-11-15',
-    time: '10:00 AM - 04:00 PM',
-    venue: 'College Auditorium & Grounds',
-    category: 'Competition',
-    description: 'A competitive gathering of students from different schools and colleges featuring multiple academic, creative, and extracurricular events.',
-    image: ''
-},
-
-{
-    id: 'evt-human-6',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Farewell & Welcome Program',
-    date: '2026-12-05',
-    time: '01:00 PM - 04:00 PM',
-    venue: 'College Auditorium',
-    category: 'College Program',
-    description: 'A special gathering to welcome new students and celebrate the journey and achievements of outgoing students.',
-    image: ''
-},
-
-{
-    id: 'evt-human-7',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Social Awareness Program',
-    date: '2026-12-18',
-    time: '10:00 AM - 01:00 PM',
-    venue: 'College Campus & Community Area',
-    category: 'Social Awareness',
-    description: 'A community-focused program designed to raise awareness about important social issues and encourage students to become responsible citizens.',
-    image: ''
-},
-
-{
-    id: 'evt-human-8',
-    clubId: 'human-club',
-    clubName: 'Humanities Club',
-    title: 'Career & Skill Development Program',
-    date: '2027-01-10',
-    time: '11:00 AM - 03:00 PM',
-    venue: 'Seminar Hall',
-    category: 'Career Development',
-    description: 'An informative session helping students develop practical skills, explore career opportunities, and prepare for their professional journey.',
-    image: ''
-}
 ];
