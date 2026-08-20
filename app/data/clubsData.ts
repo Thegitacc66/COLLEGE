@@ -1092,6 +1092,35 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
         image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80'
     },
 
+    // Literature & Creative Forum (aadikavi-nepali-creative-form)
+    {
+        id: 'evt-lit-1',
+        clubId: 'aadikavi-nepali-creative-form',
+        clubName: 'Aadikavi Nepali Literature & Creative Forum',
+        title: 'Inter-College Poetry, Gazal & Short Story Recitation',
+        date: '2026-09-15',
+        time: '01:00 PM - 04:30 PM',
+        venue: 'Bhanu Memorial Hall',
+        category: 'Literature & Poetry',
+        description: 'Showcase your creative writing, poetic recitation, and gazal compositions. Renowned litterateurs and alumni poets on the judge panel.',
+        capacity: 150,
+        registeredCount: 78,
+        image: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+        id: 'evt-lit-2',
+        clubId: 'aadikavi-nepali-creative-form',
+        clubName: 'Aadikavi Nepali Literature & Creative Forum',
+        title: 'Bhanu Jayanti Cultural Drama & Creative Writing Fest',
+        date: '2026-09-24',
+        time: '11:00 AM - 04:00 PM',
+        venue: 'Main Campus Amphitheater',
+        category: 'Cultural Exhibition',
+        description: 'Celebration of Nepalese traditional folklore, theatrical drama, and instrumental folk performances.',
+        capacity: 400,
+        registeredCount: 220,
+        image: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=800&auto=format&fit=crop&q=80'
+    },
 
     // Health, Wellness & Commerce (bbs-circle)
     {
@@ -1122,14 +1151,10 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
         registeredCount: 35,
         image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&auto=format&fit=crop&q=80'
     },
-
-    // Youth Social Service (student-management-circle)
-
-
     // Red Cross Circle (nepal-youth-red-cross)
     {
         id: 'evt-rc-1',
-        clubId: 'nepal-youth-red-cross',
+        clubId: 'abit-club',
         clubName: 'Nepal Youth Red Cross Circle (YRCC)',
         title: 'Mega Blood Donation & Free Health Screening Camp',
         date: '2026-09-10',
@@ -1143,7 +1168,7 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
     },
     {
         id: 'evt-rc-2',
-        clubId: 'nepal-youth-red-cross',
+        clubId: 'abit-club',
         clubName: 'Nepal Youth Red Cross Circle (YRCC)',
         title: 'First Aid Certification & Disaster Preparedness Drill',
         date: '2026-09-22',
@@ -1155,7 +1180,4 @@ export const UPCOMING_EVENTS: ClubEvent[] = [
         registeredCount: 65,
         image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80'
     }
-
-    // Humanities
-
 ];
